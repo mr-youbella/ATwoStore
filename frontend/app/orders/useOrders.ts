@@ -1,0 +1,336 @@
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import { toast } from "react-toastify";
+import { Order } from "../lib/types";
+import { messages } from "../lib/langs/messages";
+import { useLang } from "../lib/hooks/useLang";
+import { getToken } from "../lib/cookies/get_token";
+import { getOrdersFromTrackings } from "../getPostOrders/orders";
+import { deleteMyOrder, getMyOrders } from "../lib/orders/myOrders";
+
+export function useOrders()
+{
+	// ============= State =============
+	const [orders, setOrders] = useState<Order[]>([]);
+	const [refresh_orders, setRefreshOrders] = useState<boolean>(true);
+	const [loading_orders, setLoadingOrders] = useState<boolean>(true);
+	const [search, setSearch] = useState("");
+	const [filter, setFilter] = useState("all");
+	const { lang, toggleLang, lang_loading } = useLang();
+	const t = messages[lang];
+	const [page, setPage] = useState(1);
+	const [expanded, setExpanded] = useState<string | null>(null);
+	const perPage = 10;
+
+	const FILTERS: { label: string; value: string }[] =
+	[
+		{ label: t.filterAll, value: "all" },
+		{ label: t.filterDelivered, value: "delivered" },
+		{ label: t.filterScheduled, value: "scheduled" },
+		{ label: t.filterPickup, value: "pickup" },
+		{ label: t.filterReturned, value: "returned" },
+		{ label: t.myOrder, value: "my_order" },
+	];
+
+	// ============= Init =============
+	useEffect(() =>
+	{
+		async function init()
+		{
+			const token = await getToken();
+			if (!token)
+				return;
+			try
+			{
+				const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				});
+
+				if (!res.ok)
+					return;
+
+				const user = await res.json();
+				if (!user.digylog_token)
+					return;
+				const [myOrders, digylogOrders] = await Promise.all([ getMyOrders(), user.digylog_token ? getOrdersFromTrackings(token, user.digylog_token) : Promise.resolve([]),]);
+				const allOrders =
+				[
+					...myOrders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),
+					...digylogOrders.map((o: any) => ({ ...o, isMyOrder: false,})),
+				];
+	 	 	 	allOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+	 	 	 	setOrders(allOrders);
+			}
+			catch {}
+			finally
+			{
+				setLoadingOrders(false);
+			}
+		}
+
+		init();
+	}, [refresh_orders]);
+
+	// ============= Delete Order =============
+
+	async function handleDeleteOrder(id: number)
+	{
+		const toastId = toast.loading(t.deleting);
+
+		try
+		{
+			 await deleteMyOrder(id);
+
+			 toast.update(toastId,
+			{
+			 	render: t.orderDeleted,
+			 	type: "success",
+			 	isLoading: false,
+			 	autoClose: 3000,
+			});
+			setRefreshOrders(!refresh_orders);
+		} 
+		catch (err: any)
+		{
+			 toast.update(toastId,
+			{
+			 	render: err.message || t.deleteFailed,
+			 	type: "error",
+			 	isLoading: false,
+			 	autoClose: 3000,
+			});
+		}
+	}
+
+	// ============= Download Order =============
+	const downloadOrder = useCallback(async (tracking: string) =>
+	{
+		const toastId = toast.loading(t.downloading);
+
+		try
+		{
+			const res_pdf = await fetch(`/api/downloadOrder`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ orders: [tracking], format: "5" }),
+			});
+
+			if (!res_pdf.ok)
+			{
+				toast.update(toastId,
+				{
+					render: t.labelFailed,
+					type: "error",
+					isLoading: false,
+					autoClose: 3000,
+				});
+				return;
+			}
+
+			const blob = await res_pdf.blob();
+			const url = window.URL.createObjectURL(blob);
+			window.open(url, "_blank");
+
+			toast.update(toastId,
+			{
+				render: t.downloadSuccess,
+				type: "success",
+				isLoading: false,
+				autoClose: 2000,
+			});
+		}
+		catch
+		{
+			toast.update(toastId,
+			{
+				render: t.serverError,
+				type: "error",
+				isLoading: false,
+				autoClose: 3000,
+			});
+		}
+	}, []);
+
+	// ============= Download BL =============
+	const downloadBl = useCallback(async (bl: number) =>
+	{
+		if (bl === 0)
+			return;
+		const toastId = toast.loading(t.downloading);
+
+		try
+		{
+			const res = await fetch(`/api/order/downloadBl/${bl}`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+			});
+			if (!res.ok)
+			{
+				toast.update(toastId,
+				{
+					render: t.labelFailed,
+					type: "error",
+					isLoading: false,
+					autoClose: 3000,
+				});
+				return;
+			}
+
+			const blob = await res.blob();
+			const url = window.URL.createObjectURL(blob);
+			window.open(url, "_blank");
+
+			toast.update(toastId,
+			{
+				render: t.downloadSuccess,
+				type: "success",
+				isLoading: false,
+				autoClose: 2000,
+			});
+		}
+		catch
+		{
+			toast.update(toastId,
+			{
+				render: t.serverError,
+				type: "error",
+				isLoading: false,
+				autoClose: 3000,
+			});
+		}
+	}, []);
+
+	// ============= Send Order =============
+	const sendOrder = useCallback(async (tracking: string, status_id: number) =>
+	{
+		if (status_id !== 0)
+			return;
+		const toastId = toast.loading(t.sending);
+
+		try
+		{
+			const res = await fetch(`/api/order/send`,
+			{
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ orders: [tracking] }),
+			});
+
+			const data = await res.json();
+
+			if (!res.ok)
+			{
+				toast.update(toastId,
+				{
+					render: data?.message ?? t.sendFailed,
+					type: "error",
+					isLoading: false,
+					autoClose: 3000,
+				});
+				return;
+			}
+
+			setRefreshOrders(!refresh_orders);
+
+			toast.update(toastId,
+			{
+				render: t.sendSuccess,
+				type: "success",
+				isLoading: false,
+				autoClose: 3000,
+			});
+		}
+		catch
+		{
+			toast.update(toastId,
+			{
+				render: t.serverError,
+				type: "error",
+				isLoading: false,
+				autoClose: 3000,
+			});
+		}
+	}, [refresh_orders]);
+
+	// ============= Refresh =============
+	const refreshOrdersList = useCallback(() =>
+	{
+		setRefreshOrders(!refresh_orders);
+	}, [refresh_orders]);
+
+	// ============= Filter & Pagination =============
+	const filtered = orders.filter((o) =>
+	{
+		const matchSearch =
+			(o.tracking ?? "").toLowerCase().includes(search.toLowerCase()) ||
+			o.name.toLowerCase().includes(search.toLowerCase()) ||
+			o.city.toLowerCase().includes(search.toLowerCase()) ||
+			o.phone.toLowerCase().includes(search.toLowerCase());
+
+		const matchFilter =
+			filter === "all" ||
+			(o.idStatus === 6 && filter === "delivered") ||
+			(o.idStatus === 18 && filter === "scheduled") ||
+			(o.idStatus === 3 && filter === "pickup") ||
+			((o.idStatus === 8 || o.idStatus === 10 || o.idStatus === 11 || o.idStatus === 30 || o.idStatus === 32 || o.idStatus === 40 || o.idStatus === 41 || o.idStatus === 78 || o.idStatus === 79 || o.idStatus === 81) && filter === "returned") ||
+			(o.isMyOrder && filter === "my_order");
+
+		return (matchSearch && matchFilter);
+	});
+
+	const totalPages = Math.ceil(filtered.length / perPage);
+	const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+
+	const stats =
+	{
+		total: orders.length,
+		delivered: orders.filter((o) => o.idStatus === 6).length,
+		returned: orders.filter((o) =>
+			o.idStatus === 8 ||
+			o.idStatus === 10 ||
+			o.idStatus === 11 ||
+			o.idStatus === 30 ||
+			o.idStatus === 32 ||
+			o.idStatus === 40 ||
+			o.idStatus === 41 ||
+			o.idStatus === 78 ||
+			o.idStatus === 79 ||
+			o.idStatus === 81
+		).length,
+	};
+
+	// ============= Return =============
+	return {
+		// State
+		loading_orders,
+		refresh_orders,
+		search,
+		filter,
+		page,
+		expanded,
+		filtered,
+		paginated,
+		totalPages,
+		perPage,
+		stats,
+		lang_loading,
+		t,
+		lang,
+		FILTERS,
+
+		// Actions
+		setSearch,
+		setFilter,
+		setPage,
+		setExpanded,
+		refreshOrdersList,
+		downloadOrder,
+		downloadBl,
+		sendOrder,
+		toggleLang,
+		handleDeleteOrder,
+	};
+}
