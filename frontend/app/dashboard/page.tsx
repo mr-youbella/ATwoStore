@@ -97,13 +97,18 @@ export default function DashboardPage()
 				return (null);
 			const user_digylog_token = await res.json();
 			const digylog_token = user_digylog_token.digylog_token || null;
-			if (!digylog_token)
-				return;
-			const [myOrders, digylogOrders] = await Promise.all([getMyOrders(), digylog_token ? getOrdersFromTrackings(token, digylog_token) : Promise.resolve([]),]);
-			const all_orders = [...myOrders.map((o: any) => ({ ...o, isMyOrder: true, price: Number(o.price) })), ...digylogOrders.map((o: any) => ({ ...o, isMyOrder: false }))];
-			console.log(all_orders);
+			let digylog_orders = null;
+			if (digylog_token)
+				digylog_orders = await getOrdersFromTrackings(token, digylog_token);
+			const my_orders = await getMyOrders();
+			const all_orders =
+			[
+				...my_orders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),
+				...(digylog_orders ?? []).map((o: any) => ({ ...o, isMyOrder: false,})),
+			];
 			const filter_data = all_orders.filter((o) => (o.idStatus === 6 || o.isMyOrder));
 			setOrders(filter_data);
+	 	 	all_orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 		}
 		loadOrders();
 	}, []);

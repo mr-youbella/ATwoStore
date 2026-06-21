@@ -87,7 +87,6 @@ export default function SettingsPage()
 				headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
 				body:    JSON.stringify({ digylog_token: digylog_token }),
 			});
-			console.log(await res.json());
 			if (!res.ok)
 			{
 				toast.error(t.serverError);

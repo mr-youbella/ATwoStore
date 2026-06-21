@@ -39,28 +39,28 @@ export function useOrders()
 		{
 			const token = await getToken();
 			if (!token)
-				return;
+				return ;
 			try
 			{
 				const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				});
-
 				if (!res.ok)
-					return;
+					return ;
 
 				const user = await res.json();
-				if (!user.digylog_token)
-					return;
-				const [myOrders, digylogOrders] = await Promise.all([ getMyOrders(), user.digylog_token ? getOrdersFromTrackings(token, user.digylog_token) : Promise.resolve([]),]);
-				const allOrders =
+				let digylog_orders = null;
+				if (user.digylog_token)
+					digylog_orders = await getOrdersFromTrackings(token, user.digylog_token);
+				const my_orders = await getMyOrders();
+				const all_orders =
 				[
-					...myOrders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),
-					...digylogOrders.map((o: any) => ({ ...o, isMyOrder: false,})),
+					...my_orders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),
+					...(digylog_orders ?? []).map((o: any) => ({ ...o, isMyOrder: false,})),
 				];
-	 	 	 	allOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-	 	 	 	setOrders(allOrders);
+	 	 	 	all_orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+	 	 	 	setOrders(all_orders);
 			}
 			catch {}
 			finally

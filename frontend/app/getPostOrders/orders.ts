@@ -70,7 +70,7 @@ async function fetchOrder(tracking: string, digylogToken: string): Promise<Order
 	return order;
 }
 
-export async function getOrdersFromTrackings(token: string, digylogToken: string): Promise<Order[]>
+export async function getOrdersFromTrackings(token: string, digylogToken: string): Promise<Order[] | null>
 {
 	try
 	{
@@ -80,7 +80,7 @@ export async function getOrdersFromTrackings(token: string, digylogToken: string
 	}
 	catch
 	{
-		return [];
+		return null;
 	}
 }
 
