@@ -187,6 +187,13 @@ export const messages =
 		orderDeleted: "تم حذف الطلب ✅",
 		deleteFailed: "فشل حذف الطلب",
 		deleting: "جاري الحذف...",
+		addTracking:     "إضافة رقم تتبع",
+		addTrackingDesc: "أدخل رقم التتبع من DigyLog",
+		trackingAdded:   "تم إضافة الطلب ✅",
+		adding:          "جاري الإضافة...",
+		add:             "إضافة",
+		trackingNotFound: "رقم التتبع غير موجود في DigyLog",
+		trackingFailed: "طلبات فشل إضافتها",
 
 		// ============= Pickup =============
 		pickupTitle: "طلباتي الحالية",
@@ -396,6 +403,13 @@ export const messages =
 		deleteFailed: "Failed to delete order",
 		orderDeleted: "Deleted successfully ✅",
 		deleting: "Deleting...",
+		addTracking:      "Add Tracking",
+		addTrackingDesc:  "Enter the tracking number from DigyLog",
+		trackingAdded:    "Order added ✅",
+		adding:           "Adding...",
+		add:              "Add",
+		trackingNotFound: "Tracking not found in DigyLog",
+		trackingFailed:   "trackings failed to add",
 
 		// ============= Pickup =============
 		pickupTitle: "My Current Pickups",

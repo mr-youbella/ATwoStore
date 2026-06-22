@@ -13,14 +13,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ trac
 	};
 	try 
 	{
-		const [infosRes, refsRes] = await Promise.all([
+		const [infos_res, refs_res] = await Promise.all([
 			fetch(`https://api.digylog.com/api/v2/seller/order/${tracking}/infos`, { headers: HEADERS }),
 			fetch(`https://api.digylog.com/api/v2/seller/order/${tracking}/refs`, { headers: HEADERS }),
 		]);
-		if (!infosRes.ok || !refsRes.ok)
+		if (!infos_res.ok || !refs_res.ok)
 			return NextResponse.json({ error: "Server error" }, { status: 500 });
-		const infos = await infosRes.json();
-		const refs = await refsRes.json();
+		const infos = await infos_res.json();
+		const refs = await refs_res.json();
 		return NextResponse.json({ infos, refs });
 	}
 	catch (err)

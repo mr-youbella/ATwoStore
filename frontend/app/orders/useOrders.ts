@@ -7,6 +7,7 @@ import { useLang } from "../lib/hooks/useLang";
 import { getToken } from "../lib/cookies/get_token";
 import { getOrdersFromTrackings } from "../getPostOrders/orders";
 import { deleteMyOrder, getMyOrders } from "../lib/orders/myOrders";
+import { checkDigylogToken } from "../lib/data/check_digylog_token";
 
 export function useOrders()
 {
@@ -20,6 +21,10 @@ export function useOrders()
 	const t = messages[lang];
 	const [page, setPage] = useState(1);
 	const [expanded, setExpanded] = useState<string | null>(null);
+	const [show_add_tracking, setShowAddTracking] = useState(false);
+	const [new_tracking, setNewTracking]		 = useState("");
+	const [adding_tracking, setAddingTracking]   = useState(false);
+	const [check_digylog_token, setCheckDigylogToken] = useState<boolean | null>(null);
 	const perPage = 10;
 
 	const FILTERS: { label: string; value: string }[] =
@@ -31,6 +36,19 @@ export function useOrders()
 		{ label: t.filterReturned, value: "returned" },
 		{ label: t.myOrder, value: "my_order" },
 	];
+
+	useEffect(() =>
+	{
+		async function checkUserDigylogToken()
+		{
+			const digylog_token = await checkDigylogToken();
+			if (!digylog_token)
+				return (setCheckDigylogToken(false), null);	
+			else
+				setCheckDigylogToken(true);
+		}
+		checkUserDigylogToken();
+	}, []);
 
 	// ============= Init =============
 	useEffect(() =>
@@ -72,17 +90,70 @@ export function useOrders()
 		init();
 	}, [refresh_orders]);
 
-	// ============= Delete Order =============
+	// ============= Added Traking =============
+	async function handleAddTracking()
+	{
+		if (!new_tracking.trim())
+			return;
+		setAddingTracking(true);
+		try
+		{
+			const token		 	= await getToken();
+			const digylog_token = localStorage.getItem("digylog_token");
+			const trackings	 	= new_tracking.split("\n").map((t) => t.trim()).filter((t) => t.length > 0);
+			let success		 	= 0;
+			let failed		    = 0;
 
+			for (const tracking of trackings)
+			{
+				const check_res = await fetch(`/api/order/${tracking}?token=${digylog_token}`);
+				if (!check_res.ok)
+				{
+					{trackings.length === 3 && toast.error(`${tracking} — ${t.trackingNotFound}`)};
+					failed++;
+					continue;
+				}
+
+				const res  = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/digylog_trackings`,
+				{
+					method:  "POST",
+					headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+					body:	JSON.stringify({ tracking }),
+				});
+				const data = await res.json();
+				if (!res.ok)
+				{
+					{trackings.length === 3 && toast.error(data.error || t.serverError)}
+					failed++;
+					continue;
+				}
+				success++;
+			}
+
+			if (success > 0)
+			{
+				toast.success(`${success} ${t.trackingAdded}`);
+				setNewTracking("");
+				setShowAddTracking(false);
+				setRefreshOrders(!refresh_orders);
+			}
+			if (failed > 0)
+				toast.error(`${failed} ${t.trackingFailed}`);
+		}
+		catch { toast.error(t.serverError); }
+		finally { setAddingTracking(false); }
+	}
+
+	// ============= Delete Order =============
 	async function handleDeleteOrder(id: number)
 	{
 		const toastId = toast.loading(t.deleting);
 
 		try
 		{
-			 await deleteMyOrder(id);
+			await deleteMyOrder(id);
 
-			 toast.update(toastId,
+			toast.update(toastId,
 			{
 			 	render: t.orderDeleted,
 			 	type: "success",
@@ -93,7 +164,7 @@ export function useOrders()
 		} 
 		catch (err: any)
 		{
-			 toast.update(toastId,
+			toast.update(toastId,
 			{
 			 	render: err.message || t.deleteFailed,
 			 	type: "error",
@@ -320,6 +391,10 @@ export function useOrders()
 		t,
 		lang,
 		FILTERS,
+		show_add_tracking,
+		new_tracking,
+		adding_tracking,
+		check_digylog_token,
 
 		// Actions
 		setSearch,
@@ -332,5 +407,8 @@ export function useOrders()
 		sendOrder,
 		toggleLang,
 		handleDeleteOrder,
+		handleAddTracking,
+		setNewTracking,
+		setShowAddTracking,
 	};
 }

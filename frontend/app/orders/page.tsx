@@ -14,7 +14,8 @@ export default function OrdersPage()
 {
 	const router = useRouter();
 	const [auth_loading, setAuthLoading] = useState(true);
-	const { loading_orders, search, filter, page, expanded, filtered, paginated, totalPages, perPage, stats, lang_loading, t, lang, FILTERS, setSearch, setFilter, setPage, setExpanded, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder } = useOrders();
+	const { loading_orders, search, filter, page, expanded, filtered, paginated, totalPages, perPage, stats, lang_loading, t, lang, FILTERS, new_tracking, show_add_tracking, adding_tracking, check_digylog_token, setSearch, setFilter, setPage, setExpanded, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder, handleAddTracking, setNewTracking, setShowAddTracking }
+		= useOrders();
 	useEffect(() =>
 	{
 		async function check()
@@ -232,6 +233,44 @@ export default function OrdersPage()
 						</div>
 					</div>
 				</div>
+				{/* Floating Button */}
+				<button
+					hidden={check_digylog_token ? false : true}
+					onClick={() => setShowAddTracking(true)}
+					className="fixed bottom-6 right-6 w-14 h-14 bg-[#4F46E5] text-white rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-[#4338CA] transition-all duration-300 hover:scale-110 z-40">
+					<FontAwesomeIcon icon={faQrcode} className="text-xl" />
+				</button>
+
+				{/* Modal */}
+				{show_add_tracking && 
+				(
+					<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+						<div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4">
+							<h2 className="text-lg font-bold text-[#1A1A2E]">{t.addTracking}</h2>
+							<p className="text-xs text-[#505F76]">{t.addTrackingDesc}</p>
+							<textarea
+								value={new_tracking}
+								onChange={(e) => setNewTracking(e.target.value)}
+								className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#4F46E5] font-mono resize-none"
+								placeholder={"S3C419D5S\nSC083E91T\nS72E9022T"}
+								rows={4}
+							/>
+							<div className="flex gap-2">
+								<button
+									onClick={() => { setShowAddTracking(false); setNewTracking(""); }}
+									className="flex-1 border border-gray-200 rounded-xl py-2.5 text-sm font-semibold text-[#505F76] cursor-pointer hover:bg-gray-50">
+									{t.cancel}
+								</button>
+								<button
+									onClick={handleAddTracking}
+									disabled={adding_tracking || !new_tracking.trim()}
+									className="flex-1 bg-[#4F46E5] text-white rounded-xl py-2.5 text-sm font-semibold cursor-pointer hover:bg-[#4338CA] disabled:opacity-60">
+									{adding_tracking ? t.adding : t.add}
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
 			</main>
 		</div>
 	);
