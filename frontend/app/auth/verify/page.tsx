@@ -21,16 +21,16 @@ export default function LoginPage()
     const [warning, setWarning] = useState(false);
 	const [error, setError] = useState("");
 	const [loading, setLoading]   = useState(false);
+	const t = messages[lang];
 	const minutes = String(Math.floor(countdown / 60)).padStart(2, "0");
 	const seconds = String(countdown % 60).padStart(2, "0");
-	const t = messages[lang];
 
 	useEffect(() =>
 	{
 		async function check()
 		{
-			const ok =  await checkAuth(true, router);
-			if (ok)
+			const ok =  await checkAuth(false, router);
+			if (!ok)
 				return ;
 			setAuthLoading(false);
 		}
@@ -86,10 +86,10 @@ export default function LoginPage()
 			const data = await res.json();
 			if (!res.ok)
 			{
-				toast.error(data.error || "Failed to send verification code.");
+				toast.error(data.error || t.failedSendCode);
 				return ;
 			}
-			toast.success("A new verification code has been sent to your email.");
+			toast.success(t.sendCode);
 			setCountdown(60);
 			setWarning(true);
 		}
@@ -125,10 +125,10 @@ export default function LoginPage()
 			const data = await res.json();
 			if (!res.ok)
 			{
-				toast.error(data.error || "Invalid or expired verification code.");
+				toast.error(data.error || t.invalidCode);
 				return ;
 			}
-			toast.success("Your email has been verified successfully.");
+			toast.success(t.successCode);
 			router.replace("/home");
 		}
 		catch
@@ -160,19 +160,19 @@ export default function LoginPage()
 				<div className="flex flex-col items-center mb-8">
 					<img className="w-16 h-16 rounded-full object-cover mb-3" src="/logo_A2Store.png" alt="logo" />
 					<h1 className="text-2xl font-bold text-[#3323CC]">{t.storeName}</h1>
-					<p className="text-[#68788F] text-sm mt-1">{t.loginSubtitle}</p>
+					<p className="text-[#68788F] text-sm mt-1">{t.verifySubtitle}</p>
 				</div>
 
 				{/* Card */}
 				<form className="bg-white rounded-2xl shadow-sm p-6 space-y-4" onSubmit={handleSubmit}>
 
 					<div className="space-y-1.5">
-						<h2 className="text-3xl font-bold text-[#4F46E5]">Verify your Email</h2>
-						<p>We've sent a 6-digit code to your email. Enter the code below to continue.</p>
+						<h2 className="text-3xl font-bold text-[#4F46E5]">{t.verifyTitle}</h2>
+						<p>{t.verifyDec}</p>
 					</div>
 					<div hidden={!warning} className="mt-4 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
-						<p className="text-sm font-medium text-yellow-800">⚠️ Can't find the email?</p>
-						<p className="mt-1 text-sm text-yellow-700">Please check your spam or junk folder. It may take a few minutes for theemail to arrive.</p>
+						<p className="text-sm font-medium text-yellow-800">{t.verifyTitleWarning}</p>
+						<p className="mt-1 text-sm text-yellow-700">{t.verifyDecWarning}</p>
 					</div>
 					<div className="flex justify-center gap-3" onPaste={handlePaste}>
 						{code.map((digit, index) =>
@@ -180,11 +180,11 @@ export default function LoginPage()
 							<input key={index} ref={(el) => { inputs.current[index] = el; }} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleChange(index, e.target.value)} onKeyDown={(e) => handleKeyDown(index, e)} className={`w-12 h-14 text-center text-xl font-semibold border ${error ? "border-red-500" : digit ? "border-[#7a3ae8]" : "border-gray-400"} rounded-xl focus:outline-none focus:border-[#3a49e8] transition-all`}/>
 						))}
 					</div>
-					<button type="submit" disabled={loading} className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold text-sm tracking-widest uppercase rounded-xl py-3.5 transition-colors flex items-center justify-center gap-2 mt-1 cursor-pointer">{loading ? "Verifying..." : "Verify and continue" }</button>
+					<button type="submit" disabled={loading} className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold text-sm tracking-widest uppercase rounded-xl py-3.5 transition-colors flex items-center justify-center gap-2 mt-1 cursor-pointer">{loading ? t.verfySendCodeLoading : t.verfySendCode }</button>
 					{error && <p className="text-red-500 text-xs text-center -mt-2">{error}</p>}
 					<div className="text-center">
-						<p>Didn't receive the code?</p>
-						<button onClick={handleResend} type="button" disabled={resending || countdown > 0} className="w-fit bg-transparent hover:underline disabled:opacity-50 disabled:cursor-not-allowed text-[#4F46E5] text-sm font-semibold tracking-wider transition-colors cursor-pointer">{resending ? "Resending..." : "Resend code"}</button>
+						<p>{t.verfyResendQ}</p>
+						<button onClick={handleResend} type="button" disabled={resending || countdown > 0} className="w-fit bg-transparent hover:underline disabled:opacity-50 disabled:cursor-not-allowed text-[#4F46E5] text-sm font-semibold tracking-wider transition-colors cursor-pointer">{resending ? t.verfyReSendCodeLoading : t.verfyReSendCode}</button>
 						<span className="ml-2 text-sm font-bold text-[#4F46E5]">{minutes}:{seconds}</span>
 					</div>
 				</form>

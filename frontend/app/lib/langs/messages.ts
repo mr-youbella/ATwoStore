@@ -65,6 +65,22 @@ export const messages =
 		usernameInvalid: "اسم المستخدم يجب أن يحتوي فقط على حروف إنجليزية صغيرة والشرطة السفلية (_)",
 		loginRequired: "الرجاء تسجيل الدخول أولاً",
 
+		// ============= Verification =============
+		verifySubtitle: "تحقق من بريدك الإلكتروني",
+		verifyTitle: "تأكيد البريد الإلكتروني",
+		verifyDec: "لقد أرسلنا رمز تحقق مكوّنًا من 6 أرقام إلى بريدك الإلكتروني. أدخل الرمز أدناه للمتابعة.",
+		verifyTitleWarning: "⚠️ لم تجد الرسالة؟",
+		verifyDecWarning: "يرجى التحقق من مجلد الرسائل غير المرغوب فيها (Spam) أو البريد العشوائي (Junk). قد يستغرق وصول الرسالة بضع دقائق.",
+		verfySendCode: "تأكيد والمتابعة",
+		verfySendCodeLoading: "جارٍ التحقق...",
+		verfyReSendCode: "إعادة إرسال الرمز",
+		verfyReSendCodeLoading: "جارٍ إعادة الإرسال...",
+		verfyResendQ: "لم تستلم رمز التحقق؟",
+		failedSendCode: "فشل في إرسال رمز التحقق.",
+		sendCode: "تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني.",
+		invalidCode: "رمز التحقق غير صحيح أو انتهت صلاحيته.",
+		successCode: "تم تأكيد بريدك الإلكتروني بنجاح.",
+
 		// ============= Home =============
 		welcome: "مرحباً بك،",
 		activeShipments: "حالة الشحنات النشطة",
@@ -280,6 +296,22 @@ export const messages =
 		usernameTooShort: "Username is too short (minimum 3 characters)",
 		usernameInvalid: "Username can only contain lowercase letters and underscores",
 		loginRequired: "Please sign in first",
+
+		// ============= Verification =============
+		verifySubtitle: "Check your email",
+		verifyTitle: "Verify your Email",
+		verifyDec: "We've sent a 6-digit code to your email. Enter the code below to continue.",
+		verifyTitleWarning: "⚠️ Can't find the email?",
+		verifyDecWarning: "Please check your spam or junk folder. It may take a few minutes for theemail to arrive.",
+		verfySendCode: "Verify and continue",
+		verfySendCodeLoading: "Verifying...",
+		verfyReSendCode: "Resend code",
+		verfyReSendCodeLoading: "Resending...",
+		verfyResendQ: "Didn't receive the code?",
+		failedSendCode: "Failed to send verification code.",
+		sendCode: "A new verification code has been sent to your email.",
+		invalidCode: "Invalid or expired verification code.",
+		successCode: "Your email has been verified successfully.",
 
 		// ============= Home =============
 		welcome: "Welcome,",
