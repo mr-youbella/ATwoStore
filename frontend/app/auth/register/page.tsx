@@ -25,7 +25,7 @@ export default function RegisterPage()
 	{
 		async function check()
 		{
-			const ok = await checkAuth(true, router);
+			const ok = await checkAuth(true, false, router);
 			if (ok)
 				return ;
 			setAuthLoading(false);
@@ -59,7 +59,6 @@ export default function RegisterPage()
 			toast.error(t.passwordTooShort);
 			return;
 		}
-		checkAuth(true, router);
 		setLoading(true);
 		try
 		{

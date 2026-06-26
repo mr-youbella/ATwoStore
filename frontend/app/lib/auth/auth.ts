@@ -8,7 +8,7 @@ interface Form
 	digylog_token: string
 }
 
-export async function checkAuth(is_login_page: boolean, route: any)
+export async function checkAuth(is_login_page: boolean, is_verify_page: boolean, route: any)
 {
 	try
 	{
@@ -34,7 +34,7 @@ export async function checkAuth(is_login_page: boolean, route: any)
 			return (false);
 		}
 		const data = await res.json();
-		if (!data.email_verified)
+		if (!data.email_verified && !is_verify_page)
 		{
 			route.replace("/auth/verify");
 			return (false);

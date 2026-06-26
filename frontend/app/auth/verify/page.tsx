@@ -29,7 +29,7 @@ export default function LoginPage()
 	{
 		async function check()
 		{
-			const ok =  await checkAuth(false, router);
+			const ok = await checkAuth(false, true, router);
 			if (!ok)
 				return ;
 			setAuthLoading(false);
