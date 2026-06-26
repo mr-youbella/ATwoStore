@@ -81,6 +81,7 @@ export default function OrdersPage()
 						)}
 						<table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
 							<colgroup>
+								<col style={{ width: "40px" }} />
 								<col style={{ width: "120px" }} />
 								<col style={{ width: "70px" }} />
 								<col style={{ width: "130px" }} />
@@ -94,6 +95,7 @@ export default function OrdersPage()
 							</colgroup>
 							<thead>
 								<tr className="border-b border-gray-100 bg-[#F8F9FF]">
+									<th className="p-3"></th>
 									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thTracking}</th>
 									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thPrice}</th>
 									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thClient}</th>
@@ -107,20 +109,25 @@ export default function OrdersPage()
 								</tr>
 							</thead>
 							<tbody>
-								
 								{paginated.length === 0 && !loading_orders && (
 									<tr>
-										<td colSpan={10} className="text-center py-12 text-[#505F76] text-sm">{t.noResults}</td>
+										<td colSpan={11} className="text-center py-12 text-[#505F76] text-sm">{t.noResults}</td>
 									</tr>
 								)}
-								{paginated.map((order, index) => (
+								{paginated.map((order, index) =>
+								(
 									<Fragment key={index}>
-										<tr key={order.tracking} className="hover:bg-[#F8F9FF] transition-colors">
+										<tr className="hover:bg-[#F8F9FF] transition-colors">
+											<td className="p-3">
+												<button
+													onClick={() => setExpanded(expanded === order.tracking ? null : order.tracking)}
+													className="w-7 h-7 rounded-full bg-[#4F46E5] flex items-center justify-center text-white cursor-pointer hover:bg-[#4338CA] transition-colors"
+												>
+													<FontAwesomeIcon icon={expanded === order.tracking ? faChevronUp : faChevronDown} className="text-xs" />
+												</button>
+											</td>
 											<td className="p-3">
 												<div className="flex items-center gap-2 text-[#4F46E5] font-semibold text-xs">
-													<button onClick={() => setExpanded(expanded === order.tracking ? null : order.tracking)} className="w-7 h-7 rounded-full bg-[#4F46E5] flex items-center justify-center text-white cursor-pointer hover:bg-[#4338CA] transition-colors">
-														<FontAwesomeIcon icon={expanded === order.tracking ? faChevronUp : faChevronDown} className="text-xs" />
-													</button>
 													<FontAwesomeIcon icon={faQrcode} className="text-xs" />
 													{order.tracking}
 												</div>
@@ -159,7 +166,7 @@ export default function OrdersPage()
 										</tr>
 										{expanded === order.tracking && (
 											<tr key={`${order.tracking}-expanded`} className="bg-[#F8F9FF]">
-												<td colSpan={10} className="px-6 py-4 border-b border-gray-100">
+												<td colSpan={11} className="px-6 py-4 border-b border-gray-100">
 													<table className="w-full text-xs mb-3" style={{ tableLayout: "fixed" }}>
 														<thead>
 															<tr className="border-b border-gray-200">

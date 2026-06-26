@@ -72,10 +72,7 @@ export default function LoginPage()
 
 				{/* Lang toggle */}
 				<div className="flex justify-end mb-4">
-					<button
-						onClick={toggleLang}
-						className="w-9 h-9 rounded-full bg-[#4F46E5] text-white text-sm font-bold cursor-pointer hover:bg-[#4338CA] transition-all duration-300"
-					>
+					<button onClick={toggleLang} className="w-9 h-9 rounded-full bg-[#4F46E5] text-white text-sm font-bold cursor-pointer hover:bg-[#4338CA] transition-all duration-300">
 						{lang === "ar" ? "EN" : "ع"}
 					</button>
 				</div>
@@ -96,7 +93,7 @@ export default function LoginPage()
 						<input
 							value={form.identifier}
 							onChange={(e) => update("identifier", e.target.value)}
-							className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none transition-colors ${invalid("identifier") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
+							className={`w-full border rounded-xl px-4 py-2.5 text-[16px] outline-none transition-colors ${invalid("identifier") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
 							placeholder={t.identifierPlaceholder}
 						/>
 						{invalid("identifier") && <p className="text-red-500 text-xs mt-1">{t.required}</p>}
@@ -111,7 +108,7 @@ export default function LoginPage()
 								onChange={(e) => update("password", e.target.value)}
 								type={showPass ? "text" : "password"}
 								onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-								className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none transition-colors ${lang === "ar" ? "pl-10" : "pr-10"} ${invalid("password") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
+								className={`w-full border rounded-xl px-4 py-2.5 text-[16px] outline-none transition-colors ${lang === "ar" ? "pl-10" : "pr-10"} ${invalid("password") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
 								placeholder="••••••••"
 							/>
 							<button

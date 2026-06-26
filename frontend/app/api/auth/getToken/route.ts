@@ -7,19 +7,10 @@ export async function GET()
 	{
 		const cookieStore = await cookies();
 		const token = cookieStore.get("token")?.value || null;
-		return NextResponse.json(
-		{
-			success: true,
-			token: token,
-		}, { status: 200 });
+		return NextResponse.json({ success: true, token: token, }, { status: 200 });
 	}
 	catch
 	{
-		return NextResponse.json(
-		{
-			success: false,
-			token: null,
-			message: "Failed to get token",
-		}, { status: 500 });
+		return NextResponse.json({ success: false, token: null, message: "Failed to get token", }, { status: 500 });
 	}
 }

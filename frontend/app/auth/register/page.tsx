@@ -114,7 +114,7 @@ export default function RegisterPage()
 						<input
 							value={form.username}
 							onChange={(e) => update("username", e.target.value)}
-							className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none transition-colors ${invalid("username") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
+							className={`w-full border rounded-xl px-4 py-2.5 text-[16px ] outline-none transition-colors ${invalid("username") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
 							placeholder={t.usernamePlaceholder}
 						/>
 						{invalid("username") && <p className="text-red-500 text-xs mt-1">{t.usernameRequired}</p>}
@@ -129,7 +129,7 @@ export default function RegisterPage()
 							value={form.email}
 							onChange={(e) => update("email", e.target.value)}
 							type="email"
-							className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none transition-colors ${invalid("email") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
+							className={`w-full border rounded-xl px-4 py-2.5 text-[16px ] outline-none transition-colors ${invalid("email") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
 							placeholder={t.emailPlaceholder}
 						/>
 						{invalid("email") && <p className="text-red-500 text-xs mt-1">{t.emailRequired}</p>}
@@ -146,7 +146,7 @@ export default function RegisterPage()
 								onChange={(e) => update("password", e.target.value)}
 								type={showPass ? "text" : "password"}
 								onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-								className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none transition-colors ${lang === "ar" ? "pl-10" : "pr-10"} ${invalid("password") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
+								className={`w-full border rounded-xl px-4 py-2.5 text-[16px ] outline-none transition-colors ${lang === "ar" ? "pl-10" : "pr-10"} ${invalid("password") ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-[#4F46E5]"}`}
 								placeholder="••••••••"
 							/>
 							<button
@@ -169,7 +169,7 @@ export default function RegisterPage()
 						<input
 							value={form.digylog_token}
 							onChange={(e) => update("digylog_token", e.target.value)}
-							className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#4F46E5] transition-colors font-mono"
+							className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px ] outline-none focus:border-[#4F46E5] transition-colors font-mono"
 							placeholder={t.tokenPlaceholder}
 						/>
 						<p className="text-[#505F76] text-xs mt-1">{t.tokenHint}</p>

@@ -11,6 +11,7 @@ import digylogTrackings from "./routes/digylog_trackings";
 import digylogWebhook from "./routes/digylog_webhook";
 import digylogPickups from "./routes/digylog_pickups";
 import orders from "./routes/orders";
+import emailVerify from "./routes/email_verify";
 
 dotenv.config({ path: "./.env.local" });
 
@@ -27,6 +28,7 @@ fastify.register(digylogTrackings);
 fastify.register(digylogWebhook);
 fastify.register(digylogPickups);
 fastify.register(orders);
+fastify.register(emailVerify);
 
 declare module "fastify" { interface FastifyInstance { authenticate: (req: FastifyRequest, reply: FastifyReply) => Promise<void> } }
 

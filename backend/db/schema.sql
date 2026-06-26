@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users
 	username       VARCHAR(50)  UNIQUE NOT NULL,
 	email          VARCHAR(100) UNIQUE NOT NULL,
 	password_hash  TEXT         NOT NULL,
+	email_verified BOOLEAN DEFAULT FALSE;
 	digylog_token  TEXT,
 	created_at     TIMESTAMP DEFAULT NOW()
 );
@@ -47,4 +48,13 @@ CREATE TABLE IF NOT EXISTS orders_refs
 	order_id     INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
 	designation  TEXT    NOT NULL,
 	quantity     INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE email_verifications
+(
+	id SERIAL PRIMARY KEY,
+	user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	code_hash TEXT NOT NULL,
+	expires_at TIMESTAMP NOT NULL,
+	created_at TIMESTAMP DEFAULT NOW()
 );

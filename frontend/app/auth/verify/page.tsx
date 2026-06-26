@@ -1,0 +1,194 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useLang } from "@/app/lib/hooks/useLang";
+import { messages } from "@/app/lib/langs/messages";
+import LoadingPage from "@/app/loading";
+import { checkAuth } from "@/app/lib/auth/auth";
+import { getToken } from "@/app/lib/cookies/get_token";
+
+export default function LoginPage()
+{
+	const router = useRouter();
+	const { lang, toggleLang, lang_loading } = useLang();
+	const [auth_loading, setAuthLoading]   = useState(true);
+	const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
+	const inputs = useRef<(HTMLInputElement | null)[]>([]);
+    const [resending, setResending] = useState(false);
+	const [countdown, setCountdown] = useState(0);
+    const [warning, setWarning] = useState(false);
+	const [error, setError] = useState("");
+	const [loading, setLoading]   = useState(false);
+	const minutes = String(Math.floor(countdown / 60)).padStart(2, "0");
+	const seconds = String(countdown % 60).padStart(2, "0");
+	const t = messages[lang];
+
+	useEffect(() =>
+	{
+		async function check()
+		{
+			const ok =  await checkAuth(true, router);
+			if (ok)
+				return ;
+			setAuthLoading(false);
+		}
+		check();
+	}, []);
+
+	useEffect(() =>
+	{
+		if (countdown === 0)
+			return;
+		const timer = setInterval(() => { setCountdown((prev) => prev - 1); }, 1000);
+		return (() => clearInterval(timer));
+	}, [countdown]);
+
+	function handlePaste(e: React.ClipboardEvent)
+	{
+		e.preventDefault();
+		const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+		const new_code = [...code];
+		pasted.split("").forEach((char, index) => { new_code[index] = char; });
+		setCode(new_code);
+		inputs.current[Math.min(pasted.length, 5)]?.focus();
+	};
+	function handleChange(index: number, value: string)
+	{
+		if (!/^\d*$/.test(value))
+			return ;
+		const new_code = [...code];
+		new_code[index] = value.slice(-1);
+		setCode(new_code);
+		setError("");
+		if (value && index < 5)
+			inputs.current[index + 1]?.focus();
+	};
+	function handleKeyDown(index: number, e: React.KeyboardEvent)
+	{
+		if (e.key === "Backspace" && !code[index] && index > 0)
+			inputs.current[index - 1]?.focus();
+	};
+
+	async function handleResend(e: React.FormEvent)
+	{
+		e.preventDefault();
+		setResending(true);
+		try
+		{
+			const res = await fetch("/api/auth/sendCode",
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ to: "masteryoubella@gmail.com" }),
+			});
+			const data = await res.json();
+			if (!res.ok)
+			{
+				toast.error(data.error || "Failed to send verification code.");
+				return ;
+			}
+			toast.success("A new verification code has been sent to your email.");
+			setCountdown(60);
+			setWarning(true);
+		}
+		catch
+		{
+			toast.error(t.serverError);
+		}
+		finally
+		{
+			setResending(false);
+		}
+	};
+
+	async function handleSubmit(e: React.FormEvent)
+	{
+		e.preventDefault();
+		if (code.some((d) => d === ""))
+		{
+			setError("Please enter the complete 6-digit code.");
+			return ;
+		}
+		setLoading(true);
+		const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+		const token = await getToken();
+		try
+		{
+			const res = await fetch(`${BACKEND_URL}/verifyEmail`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+				body: JSON.stringify({ code: code.join("") }),
+			});
+			const data = await res.json();
+			if (!res.ok)
+			{
+				toast.error(data.error || "Invalid or expired verification code.");
+				return ;
+			}
+			toast.success("Your email has been verified successfully.");
+			router.replace("/home");
+		}
+		catch
+		{
+			toast.error(t.serverError);
+		}
+		finally
+		{
+			setLoading(false);
+		}
+	};
+
+	if(lang_loading || auth_loading)
+		return <LoadingPage />;
+	return (
+		<div className="min-h-screen bg-[#F0F2FF] flex items-center justify-center p-4" dir={lang === "ar" ? "rtl" : "ltr"}>
+			<ToastContainer position="top-right" rtl={lang === "ar"} />
+
+			<div className="w-full max-w-md">
+
+				{/* Lang toggle */}
+				<div className="flex justify-end mb-4">
+					<button onClick={toggleLang} className="w-9 h-9 rounded-full bg-[#4F46E5] text-white text-sm font-bold cursor-pointer hover:bg-[#4338CA] transition-all duration-300">
+						{lang === "ar" ? "EN" : "ع"}
+					</button>
+				</div>
+
+				{/* Logo */}
+				<div className="flex flex-col items-center mb-8">
+					<img className="w-16 h-16 rounded-full object-cover mb-3" src="/logo_A2Store.png" alt="logo" />
+					<h1 className="text-2xl font-bold text-[#3323CC]">{t.storeName}</h1>
+					<p className="text-[#68788F] text-sm mt-1">{t.loginSubtitle}</p>
+				</div>
+
+				{/* Card */}
+				<form className="bg-white rounded-2xl shadow-sm p-6 space-y-4" onSubmit={handleSubmit}>
+
+					<div className="space-y-1.5">
+						<h2 className="text-3xl font-bold text-[#4F46E5]">Verify your Email</h2>
+						<p>We've sent a 6-digit code to your email. Enter the code below to continue.</p>
+					</div>
+					<div hidden={!warning} className="mt-4 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
+						<p className="text-sm font-medium text-yellow-800">⚠️ Can't find the email?</p>
+						<p className="mt-1 text-sm text-yellow-700">Please check your spam or junk folder. It may take a few minutes for theemail to arrive.</p>
+					</div>
+					<div className="flex justify-center gap-3" onPaste={handlePaste}>
+						{code.map((digit, index) =>
+						(
+							<input key={index} ref={(el) => { inputs.current[index] = el; }} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleChange(index, e.target.value)} onKeyDown={(e) => handleKeyDown(index, e)} className={`w-12 h-14 text-center text-xl font-semibold border ${error ? "border-red-500" : digit ? "border-[#7a3ae8]" : "border-gray-400"} rounded-xl focus:outline-none focus:border-[#3a49e8] transition-all`}/>
+						))}
+					</div>
+					<button type="submit" disabled={loading} className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold text-sm tracking-widest uppercase rounded-xl py-3.5 transition-colors flex items-center justify-center gap-2 mt-1 cursor-pointer">{loading ? "Verifying..." : "Verify and continue" }</button>
+					{error && <p className="text-red-500 text-xs text-center -mt-2">{error}</p>}
+					<div className="text-center">
+						<p>Didn't receive the code?</p>
+						<button onClick={handleResend} type="button" disabled={resending || countdown > 0} className="w-fit bg-transparent hover:underline disabled:opacity-50 disabled:cursor-not-allowed text-[#4F46E5] text-sm font-semibold tracking-wider transition-colors cursor-pointer">{resending ? "Resending..." : "Resend code"}</button>
+						<span className="ml-2 text-sm font-bold text-[#4F46E5]">{minutes}:{seconds}</span>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+}

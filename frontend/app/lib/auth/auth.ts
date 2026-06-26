@@ -33,6 +33,12 @@ export async function checkAuth(is_login_page: boolean, route: any)
 				route.replace("/auth/login");
 			return (false);
 		}
+		const data = await res.json();
+		if (!data.email_verified)
+		{
+			route.replace("/auth/verify");
+			return (false);
+		}
 	}
 	catch (err)
 	{
