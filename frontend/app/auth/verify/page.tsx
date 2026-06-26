@@ -81,7 +81,6 @@ export default function LoginPage()
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ to: "masteryoubella@gmail.com" }),
 			});
 			const data = await res.json();
 			if (!res.ok)

@@ -6,13 +6,22 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function POST(req: Request)
 {
-	const { to } = await req.json();
 	const cookieStore = await cookies();
 	const token = cookieStore.get("token")?.value || null;
 	const code = Math.floor(100000 + Math.random() * 900000).toString();
 
 	try
 	{
+		const res_me = await fetch(`${BACKEND_URL}/auth/me`,
+		{
+  			method: "GET",
+  			headers: { "Authorization": `Bearer ${token}` },
+		});
+		const user_data = await res_me.json();
+		if (!res_me.ok)
+			throw new Error(user_data.error || "Failed get email");
+		const email = user_data.email;
+	
 		const res = await fetch(`${BACKEND_URL}/emailVerification`,
 		{
   			method: "POST",
@@ -54,7 +63,7 @@ export async function POST(req: Request)
 		await transporter.sendMail
 		({
 			from: `"ATwoStore" <${process.env.SMTP_USER}>`,
-			to,
+			to: email,
 			subject: "Verify Your Email",
 			text: `Your ATwoStore verification code is: ${code}. This code will expire in 10 minutes.`,
 			html: html_page,
