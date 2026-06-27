@@ -34,9 +34,10 @@ export async function checkAuth(is_login_page: boolean, is_verify_page: boolean,
 			return (false);
 		}
 		const data = await res.json();
-		if (!data.email_verified && !is_verify_page)
+		if (!data.email_verified)
 		{
-			route.replace("/auth/verify");
+			if (!is_verify_page)
+				route.replace("/auth/verify");
 			return (false);
 		}
 	}
@@ -46,7 +47,7 @@ export async function checkAuth(is_login_page: boolean, is_verify_page: boolean,
 			route.replace("/auth/login");
 		return (false);
 	}
-	if (is_login_page)
+	if (is_login_page || is_verify_page)
 		route.replace("/home");
 	return (true);
 }

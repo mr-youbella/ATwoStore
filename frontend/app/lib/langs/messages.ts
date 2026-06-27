@@ -104,6 +104,9 @@ export const messages =
 		avgOrderValue: "متوسط قيمة الطلب:",
 		topProducts: "أكثر المنتجات مبيعاً",
 		viewAll: "عرض كل المخزون",
+		labelAll: "كل الفترات",
+		labelThisMonth: "هذا شهر",
+		labelThisYear: "هذه السنة",
 
 		// ============= Create Order =============
 		createOrder: "إنشاء طلب",
@@ -336,6 +339,9 @@ export const messages =
 		avgOrderValue: "Avg. order value:",
 		topProducts: "Top Selling Products",
 		viewAll: "View All Inventory",
+		labelAll: "All Time",
+		labelThisMonth: "This Month",
+		labelThisYear: "This Year",
 
 		// ============= Create Order =============
 		createOrder: "Create Order",

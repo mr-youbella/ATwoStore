@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { checkAuth } from "../lib/auth/auth";
 import { ToastContainer } from 'react-toastify';
+import AddTrackings from "../lib/components/add_trackings";
 
 export default function CreateOrder()
 {
@@ -447,6 +448,7 @@ export default function CreateOrder()
 							</div>
 						) || <DigylogTokenError lang={lang}/>}
 					</form>
+					<AddTrackings lang={lang} setRefreshOrders={null} refresh_orders={null} check_digylog_token={check_digylog_token} />
 				</main>
 		</div>
 	);

@@ -21,9 +21,6 @@ export function useOrders()
 	const t = messages[lang];
 	const [page, setPage] = useState(1);
 	const [expanded, setExpanded] = useState<string | null>(null);
-	const [show_add_tracking, setShowAddTracking] = useState(false);
-	const [new_tracking, setNewTracking]		 = useState("");
-	const [adding_tracking, setAddingTracking]   = useState(false);
 	const [check_digylog_token, setCheckDigylogToken] = useState<boolean | null>(null);
 	const perPage = 10;
 
@@ -89,60 +86,6 @@ export function useOrders()
 
 		init();
 	}, [refresh_orders]);
-
-	// ============= Added Traking =============
-	async function handleAddTracking()
-	{
-		if (!new_tracking.trim())
-			return;
-		setAddingTracking(true);
-		try
-		{
-			const token		 	= await getToken();
-			const digylog_token = localStorage.getItem("digylog_token");
-			const trackings	 	= new_tracking.split("\n").map((t) => t.trim()).filter((t) => t.length > 0);
-			let success		 	= 0;
-			let failed		    = 0;
-
-			for (const tracking of trackings)
-			{
-				const check_res = await fetch(`/api/order/${tracking}?token=${digylog_token}`);
-				if (!check_res.ok)
-				{
-					{trackings.length === 3 && toast.error(`${tracking} — ${t.trackingNotFound}`)};
-					failed++;
-					continue;
-				}
-
-				const res  = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/digylog_trackings`,
-				{
-					method:  "POST",
-					headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-					body:	JSON.stringify({ tracking }),
-				});
-				const data = await res.json();
-				if (!res.ok)
-				{
-					{trackings.length === 3 && toast.error(data.error || t.serverError)}
-					failed++;
-					continue;
-				}
-				success++;
-			}
-
-			if (success > 0)
-			{
-				toast.success(`${success} ${t.trackingAdded}`);
-				setNewTracking("");
-				setShowAddTracking(false);
-				setRefreshOrders(!refresh_orders);
-			}
-			if (failed > 0)
-				toast.error(`${failed} ${t.trackingFailed}`);
-		}
-		catch { toast.error(t.serverError); }
-		finally { setAddingTracking(false); }
-	}
 
 	// ============= Delete Order =============
 	async function handleDeleteOrder(id: number)
@@ -391,9 +334,6 @@ export function useOrders()
 		t,
 		lang,
 		FILTERS,
-		show_add_tracking,
-		new_tracking,
-		adding_tracking,
 		check_digylog_token,
 
 		// Actions
@@ -407,8 +347,6 @@ export function useOrders()
 		sendOrder,
 		toggleLang,
 		handleDeleteOrder,
-		handleAddTracking,
-		setNewTracking,
-		setShowAddTracking,
+		setRefreshOrders,
 	};
 }

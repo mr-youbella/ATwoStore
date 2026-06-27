@@ -43,9 +43,17 @@ export default function DashboardPage()
 {
 	const router = useRouter();
 	const [orders, setOrders] = useState<Order[] | null>(null);
+	const [all_orders, setAllOrders] = useState<Order[]>([]);
 	const { lang, toggleLang, lang_loading } = useLang();
 	const [auth_loading, setAuthLoading] = useState(true);
+	const [period, setPeriod] = useState<"month" | "year" | "all">("all");
 	const t = messages[lang];
+	const period_options: {key: "month" | "year" | "all", label: string}[] =
+	[
+		{ key: "all", label: t.labelAll },
+		{ key: "month", label: t.labelThisMonth },
+		{ key: "year", label: t.labelThisYear },
+	];
 	let	stats = null;
 	if (orders)
 	{
@@ -78,6 +86,30 @@ export default function DashboardPage()
 		}
 		check();
 	}, []);
+	
+	function filterOrders(newPeriod: "month" | "year" | "all")
+	{
+		setPeriod(newPeriod);
+		if (newPeriod === "all")
+		{
+			setOrders(all_orders);
+			return ;
+		}
+		const now = new Date();
+		setOrders(
+			all_orders.filter(order =>
+			{
+				const date = new Date(order.createdAt);
+				if (newPeriod === "month")
+				{
+					const lastMonth = new Date();
+					lastMonth.setMonth(lastMonth.getMonth() - 1);
+					return (date >= lastMonth && date <= now);
+				}
+				return (date.getFullYear() === now.getFullYear());
+			})
+		);
+	}
 	useEffect(() =>
 	{
 		async function loadOrders()
@@ -108,7 +140,7 @@ export default function DashboardPage()
 			];
 			const filter_data = all_orders.filter((o) => (o.idStatus === 6 || o.isMyOrder));
 			setOrders(filter_data);
-	 	 	all_orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+			setAllOrders(filter_data);
 		}
 		loadOrders();
 	}, []);
@@ -121,6 +153,15 @@ export default function DashboardPage()
 			<Header t={t} lang={lang} namePage={t.dashboard} toggleLang={toggleLang}/>
 
 			<main className="xl:w-3/4 xl:mx-auto p-5">
+
+				<div className="flex items-center gap-2 mb-6">
+					{period_options.map((item) =>
+					(
+						<button key={item.key} onClick={() => filterOrders(item.key)} className={`rounded-full px-4 py-2 text-sm font-medium transition ${period === item.key ? "bg-[#4F46E5] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"} cursor-pointer`}>
+							{item.label}
+						</button>
+					))}
+				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
