@@ -309,7 +309,7 @@ export default function PickupPage()
 		<div className="min-h-screen bg-[#F0F2FF]" >
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
 
-			<Header t={t} lang={lang} namePage={t.pickup} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.pickup} toggleLang={toggleLang}/>
 
 			{check_digylog_token === true && (
 				<main className="xl:w-3/4 xl:mx-auto p-5">

@@ -9,6 +9,7 @@ import { useLang } from "@/app/lib/hooks/useLang";
 import { messages } from "@/app/lib/langs/messages";
 import LoadingPage from "@/app/loading";
 import { checkAuth, register } from "@/app/lib/auth/auth";
+import Header from "@/app/header";
 
 export default function RegisterPage()
 {
@@ -80,30 +81,12 @@ export default function RegisterPage()
 	if(lang_loading || auth_loading)
 		return <LoadingPage />;
 	return (
-		<div className="min-h-screen bg-[#F0F2FF] flex items-center justify-center p-4" dir={lang === "ar" ? "rtl" : "ltr"}>
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
-
-			<div className="w-full max-w-md">
-
-				{/* Lang toggle */}
-				<div className="flex justify-end mb-4">
-					<button
-						onClick={toggleLang}
-						className="w-9 h-9 rounded-full bg-[#4F46E5] text-white text-sm font-bold cursor-pointer hover:bg-[#4338CA] transition-all duration-300"
-					>
-						{lang === "ar" ? "EN" : "ع"}
-					</button>
-				</div>
-
-				{/* Logo */}
-				<div className="flex flex-col items-center mb-8">
-					<img className="w-16 h-16 rounded-full object-cover mb-3" src="/logo_A2Store.png" alt="logo" />
-					<h1 className="text-2xl font-bold text-[#3323CC]">{t.storeName}</h1>
-					<p className="text-[#68788F] text-sm mt-1">{t.registerSubtitle}</p>
-				</div>
+		<div className="min-h-screen bg-[#F0F2FF]" dir={lang === "ar" ? "rtl" : "ltr"}>
+			<Header lang={lang} name_page={t.registerSubtitle} toggleLang={toggleLang} />
+			<main className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center p-4">
 
 				{/* Card */}
-				<div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+				<div className="bg-white rounded-2xl shadow-sm p-6 py-10 w-full max-w-md space-y-4">
 
 					{/* Username */}
 					<div>
@@ -192,7 +175,8 @@ export default function RegisterPage()
 					</p>
 
 				</div>
-			</div>
+			</main>
+			<ToastContainer position="top-right" rtl={lang === "ar"} />
 		</div>
 	);
 }

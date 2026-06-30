@@ -67,7 +67,7 @@ export function useOrders()
 				const user = await res.json();
 				let digylog_orders = null;
 				if (user.digylog_token)
-					digylog_orders = await getOrdersFromTrackings(token, user.digylog_token);
+					digylog_orders = await getOrdersFromTrackings(token);
 				const my_orders = await getMyOrders();
 				const all_orders =
 				[

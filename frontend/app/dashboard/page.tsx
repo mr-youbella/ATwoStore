@@ -59,11 +59,11 @@ export default function DashboardPage()
 	{
 		stats =
 		{
-			totalRevenue:   orders.reduce((sum, o) => sum + o.price, 0),
+			totalRevenue:   orders.reduce((sum, o) => sum + Number(o.price), 0),
 			deductions:	 orders.reduce((sum, o) => sum + Number(o.deliveryCost || 0), 0),
-			netProfit:	  orders.reduce((sum, o) => sum + o.price - (o.deliveryCost || 0), 0),
-			totalProducts:  orders.reduce((sum, o) => sum + o.refs.reduce((s, r) => s + r.quantity, 0), 0),
-			avgOrderValue:  orders.length > 0 ? (orders.reduce((sum, o) => sum + o.price, 0) / orders.length).toFixed(2) : 0,
+			netProfit:	  orders.reduce((sum, o) => sum + Number(o.price) - (Number(o.deliveryCost) || 0), 0),
+			totalProducts:  orders.reduce((sum, o) => sum + o.refs.reduce((s, r) => s + Number(r.quantity), 0), 0),
+			avgOrderValue:  orders.length > 0 ? (orders.reduce((sum, o) => sum + Number(o.price), 0) / orders.length).toFixed(2) : 0,
 			topProducts:	Object.entries
 			(
 				orders.reduce<Record<string, number>>((acc, order) =>
@@ -116,7 +116,7 @@ export default function DashboardPage()
 		{
 			const token = await getToken();
 			if (!token)
-				return null;
+				return (null);
 			const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
 			{
 				headers:
@@ -131,7 +131,7 @@ export default function DashboardPage()
 			const digylog_token = user_digylog_token.digylog_token || null;
 			let digylog_orders = null;
 			if (digylog_token)
-				digylog_orders = await getOrdersFromTrackings(token, digylog_token);
+				digylog_orders = await getOrdersFromTrackings(token);
 			const my_orders = await getMyOrders();
 			const all_orders =
 			[
@@ -150,7 +150,7 @@ export default function DashboardPage()
 	return (
 		<div className="min-h-screen bg-[#F0F2FF]" dir={lang === "ar" ? "rtl" : "ltr"}>
 			{/* Navbar */}
-			<Header t={t} lang={lang} namePage={t.dashboard} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.dashboard} toggleLang={toggleLang}/>
 
 			<main className="xl:w-3/4 xl:mx-auto p-5">
 

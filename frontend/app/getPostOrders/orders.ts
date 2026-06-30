@@ -23,24 +23,15 @@ async function getTrackings(token: string): Promise<string[]>
 	return response.json();
 }
 
-async function fetchOrder(tracking: string, digylogToken: string): Promise<Order | null>
+export async function fetchOrder(tracking: string): Promise<Order | null>
 {
-	const res = await fetch(`/api/order/${tracking}`,
-	{
-		headers:
-		{
-			Authorization: `Bearer ${digylogToken}`,
-			"Content-Type": "application/json",
-		},
-	});
-
+	const res = await fetch(`/api/order/${tracking}`);
 	if (!res.ok)
-		return null;
+		return (null);
 
 	const { infos, refs } = await res.json();
-
 	if (infos.idStatus === 13)
-		return null;
+		return (null);
 
 	const order: Order =
 	{
@@ -66,16 +57,15 @@ async function fetchOrder(tracking: string, digylogToken: string): Promise<Order
 			quantity: r.quantity,
 		})),
 	};
-
-	return order;
+	return (order);
 }
 
-export async function getOrdersFromTrackings(token: string, digylogToken: string): Promise<Order[] | null>
+export async function getOrdersFromTrackings(token: string): Promise<Order[] | null>
 {
 	try
 	{
 		const trackings = await getTrackings(token);
-		const orders = await Promise.all(trackings.map((t) => fetchOrder(t, digylogToken)));
+		const orders = await Promise.all(trackings.map((t) => fetchOrder(t)));
 		return orders.filter((o): o is Order => o !== null);
 	}
 	catch

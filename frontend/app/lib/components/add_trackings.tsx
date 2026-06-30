@@ -29,7 +29,7 @@ export default function AddTrackings({lang, setRefreshOrders, refresh_orders, ch
 
 			for (const tracking of trackings)
 			{
-				const check_res = await fetch(`/api/order/${tracking}?token=${digylog_token}`);
+				const check_res = await fetch(`/api/order/${tracking}`);
 				if (!check_res.ok)
 				{
 					{trackings.length === 3 && toast.error(`${tracking} — ${t.trackingNotFound}`)};

@@ -37,7 +37,7 @@ export default function CreateOrder()
 	return (
 		<div className="min-h-screen bg-[#F0F2FF]" dir={lang === "ar" ? "rtl" : "ltr"}>
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
-			<Header t={t} lang={lang} namePage={t.createOrder} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.createOrder} toggleLang={toggleLang}/>
 				<main className="p-5 xl:w-1/2 xl:mx-auto">
 					<form onSubmit={handleSubmit} className="space-y-4">
 

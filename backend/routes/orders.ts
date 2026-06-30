@@ -4,7 +4,8 @@ export default async function myOrdersRoute(fastify: FastifyInstance)
 {
 	fastify.get("/orders", { onRequest: [fastify.authenticate] }, async (req: any, reply) =>
 	{
-		const { rows } = await fastify.pg.query(
+		const { rows } = await fastify.pg.query
+		(
 			`SELECT o.*, json_agg(json_build_object('id', r.id, 'designation', r.designation, 'quantity', r.quantity)) AS refs
 			 FROM orders o
 			 LEFT JOIN orders_refs r ON r.order_id = o.id
@@ -14,6 +15,23 @@ export default async function myOrdersRoute(fastify: FastifyInstance)
 			[req.user.id]
 		);
 		return reply.send(rows);
+	});
+	fastify.get("/orders/:id", { onRequest: [fastify.authenticate] }, async (req: any, reply) =>
+	{
+		const { id } = req.params;
+		const { rows } = await fastify.pg.query
+		(
+			`SELECT o.*, json_agg(json_build_object('id', r.id, 'designation', r.designation, 'quantity', r.quantity)) AS refs
+       		FROM orders o
+       		LEFT JOIN orders_refs r ON r.order_id = o.id
+       		WHERE o.user_id = $1 AND o.id = $2
+       		GROUP BY o.id`,
+			[req.user.id, id]
+		);
+
+		if (rows.length === 0)
+			return reply.code(404).send({ message: "Order not found" });
+		return reply.send(rows[0]);
 	});
 
 	fastify.post<{ Body: { orders: { name: string; phone: string; address: string; city: string; price: number; refs: { designation: string; quantity: number }[] }[] } }> ("/orders", { onRequest: [fastify.authenticate] }, async (req: any, reply) =>

@@ -47,7 +47,7 @@ export default function HomePage()
 		<div className="min-h-screen bg-[#F0F2FF]" dir={lang === "ar" ? "rtl" : "ltr"}>
 
 			{/* Navbar */}
-			<Header t={t} lang={lang} namePage={t.subtitle} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.subtitle} toggleLang={toggleLang}/>
 
 			<main className="xl:w-1/2 xl:mx-auto p-5 space-y-5">
 
@@ -128,6 +128,22 @@ export default function HomePage()
 						<FontAwesomeIcon icon={faTruck} className="text-[#B0B8C8] text-lg" />
 					</div>
 				</button>
+
+				<button
+    onClick={() => router.push("/assistant")}
+    className="w-full bg-linear-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:opacity-95 transition-all duration-300"
+>
+    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+        <span className="text-2xl">🤖</span>
+    </div>
+    <div className={lang === "ar" ? "text-right" : "text-left"}>
+        <p className="text-white font-black text-lg">{t.aiAssistant}</p>
+        <p className="text-white/70 text-sm">{t.aiAssistantDesc}</p>
+    </div>
+    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+        <span className="text-xl">✨</span>
+    </div>
+</button>
 
 			</main>
 		</div>

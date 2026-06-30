@@ -34,7 +34,7 @@ export default function OrdersPage()
 	return (
 		<div className="min-h-screen bg-[#F0F2FF]">
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
-			<Header t={t} lang={lang} namePage={t.orders} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.orders} toggleLang={toggleLang}/>
 
 			<main className="xl:w-3/4 xl:mx-auto p-5 space-y-4">
 

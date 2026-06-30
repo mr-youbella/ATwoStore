@@ -115,7 +115,7 @@ export default function SettingsPage()
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
 
 			{/* Navbar */}
-			<Header t={t} lang={lang} namePage={t.settings} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.settings} toggleLang={toggleLang}/>
 
 			<main className="xl:w-1/2 xl:mx-auto p-5 space-y-3">
 
