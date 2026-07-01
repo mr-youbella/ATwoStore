@@ -1,14 +1,15 @@
 CREATE TABLE IF NOT EXISTS users
 (
-	id             SERIAL PRIMARY KEY,
-	username       VARCHAR(50)  UNIQUE NOT NULL,
-	email          VARCHAR(100) UNIQUE NOT NULL,
-	password_hash  TEXT         NOT NULL,
-	email_verified BOOLEAN DEFAULT FALSE;
-	digylog_token  TEXT,
-	created_at     TIMESTAMP DEFAULT NOW()
+	id              SERIAL PRIMARY KEY,
+	username        VARCHAR(50) UNIQUE,
+	email           VARCHAR(100) UNIQUE NOT NULL,
+	password_hash   TEXT,
+	provider        VARCHAR(20) NOT NULL DEFAULT 'credentials',
+	email_verified  BOOLEAN DEFAULT FALSE,
+	digylog_token   TEXT,
+	created_at      TIMESTAMP DEFAULT NOW()
 );
-
+ 
 CREATE TABLE IF NOT EXISTS digylog_trackings
 (
 	id         SERIAL PRIMARY KEY,
@@ -58,3 +59,4 @@ CREATE TABLE email_verifications
 	expires_at TIMESTAMP NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW()
 );
+    

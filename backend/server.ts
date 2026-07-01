@@ -3,15 +3,16 @@ import postgres from "@fastify/postgres";
 import fastifyJwt from "@fastify/jwt";
 import fastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
-import register from "./routes/register";
-import login from "./routes/login";
-import me from "./routes/me";
-import digylogToken from "./routes/digylog_token";
+import register from "./routes/auth/register";
+import login from "./routes/auth/login";
+import me from "./routes/auth/me";
+import settings from "./routes/settings";
 import digylogTrackings from "./routes/digylog_trackings";
 import digylogWebhook from "./routes/digylog_webhook";
 import digylogPickups from "./routes/digylog_pickups";
 import orders from "./routes/orders";
-import emailVerify from "./routes/email_verify";
+import emailVerify from "./routes/auth/email_verify";
+import google from "./routes/auth/google";
 
 dotenv.config({ path: "./.env.local" });
 
@@ -23,12 +24,13 @@ fastify.register(fastifyJwt, { secret: process.env.JWT_SECRET! });
 fastify.register(register);
 fastify.register(login);
 fastify.register(me);
-fastify.register(digylogToken);
+fastify.register(settings);
 fastify.register(digylogTrackings);
 fastify.register(digylogWebhook);
 fastify.register(digylogPickups);
 fastify.register(orders);
 fastify.register(emailVerify);
+fastify.register(google);
 
 declare module "fastify" { interface FastifyInstance { authenticate: (req: FastifyRequest, reply: FastifyReply) => Promise<void> } }
 

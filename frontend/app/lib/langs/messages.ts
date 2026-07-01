@@ -17,11 +17,13 @@ export const messages =
 			tokenDesc: "ربط حسابك مع DigyLog API",
 			connected: "متصل",
 			tokenRequired: "الـ token مطلوب",
-			tokenSaved: "تم الحفظ ✅",
+			settingSaved: "تم الحفظ ✅",
 			save: "حفظ",
 			saving: "جاري الحفظ...",
 			moreSettingsSoon: "المزيد من الإعدادات قريباً",
 			tokenInvalid: "الـ token غير صالح",
+			usernameDesc:  "تغيير اسم المستخدم الخاص بك",
+			usernameSaved: "تم تغيير الاسم ✅",
 
 			// ============= DigyLog Token Error =============
 			digylogTokenNotFound: "لم يتم العثور على DigyLog Token أو أنه غير صالح",
@@ -64,6 +66,7 @@ export const messages =
 			usernameTooShort: "اسم المستخدم قصير جدًا (الحد الأدنى 3 أحرف)",
 			usernameInvalid: "اسم المستخدم يجب أن يحتوي فقط على حروف إنجليزية صغيرة والشرطة السفلية (_)",
 			loginRequired: "الرجاء تسجيل الدخول أولاً",
+			googleFailed: "فشل تسجيل الدخول بـ Google",
 
 			// ============= Verification =============
 			verifySubtitle: "تحقق من بريدك الإلكتروني",
@@ -265,11 +268,13 @@ export const messages =
 			tokenDesc: "Connect your account with DigyLog API",
 			connected: "Connected",
 			tokenRequired: "Token is required",
-			tokenSaved: "Saved ✅",
+			settingSaved: "Saved ✅",
 			save: "Save",
 			saving: "Saving...",
 			moreSettingsSoon: "More settings coming soon",
 			tokenInvalid: "Invalid token",
+			usernameDesc:  "Change your username",
+			usernameSaved: "Username updated ✅",
 
 			// ============= DigyLog Token Error =============
 			digylogTokenNotFound: "DigyLog Token not found or invalid",
@@ -312,6 +317,7 @@ export const messages =
 			usernameTooShort: "Username is too short (minimum 3 characters)",
 			usernameInvalid: "Username can only contain lowercase letters and underscores",
 			loginRequired: "Please sign in first",
+			googleFailed: "Google sign-in failed",
 
 			// ============= Verification =============
 			verifySubtitle: "Check your email",

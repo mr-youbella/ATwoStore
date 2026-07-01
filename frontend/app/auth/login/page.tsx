@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,17 +10,20 @@ import { messages } from "@/app/lib/langs/messages";
 import LoadingPage from "@/app/loading";
 import { checkAuth, login } from "@/app/lib/auth/auth";
 import Header from "@/app/header";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage()
 {
 	const router = useRouter();
 	const { lang, toggleLang, lang_loading } = useLang();
-	const [form, setForm]         = useState({ identifier: "", password: "" });
+	const [form, setForm]		 = useState({ identifier: "", password: "" });
 	const [showPass, setShowPass] = useState(false);
 	const [loading, setLoading]   = useState(false);
 	const [auth_loading, setAuthLoading]   = useState(true);
 	const [submitted, setSubmitted] = useState(false);
 	const t = messages[lang];
+	const searchParams = useSearchParams();
 
 	useEffect(() =>
 	{
@@ -34,6 +37,24 @@ export default function LoginPage()
 		check();
 	}, []);
 
+	useEffect(() =>
+	{
+		const error = searchParams.get("error");
+		const valid_errors = ["google_failed", "server_error", "AccessDenied", "OAuthSignin", "OAuthCallback"];
+	
+		if (error && valid_errors.includes(error))
+		{
+			if (error === "google_failed")
+				toast.error(t.googleFailed);
+			else if (error === "server_error")
+				toast.error(t.serverError);
+			else
+				toast.error(t.loginFailed);
+		
+			router.replace("/auth/login");
+		}
+	}, []);
+
 	function update(field: string, value: string)
 	{
 		setForm((prev) => ({ ...prev, [field]: value }));
@@ -43,11 +64,34 @@ export default function LoginPage()
 	{
 		setSubmitted(true);
 		if (!form.identifier.trim() || !form.password.trim())
-			return;
+			return ;
 		setLoading(true);
 		try
 		{
 			const data = await login(form.identifier, form.password);
+			toast.success(t.loginSuccess);
+			router.replace("/home");
+		}
+		catch (err: any)
+		{
+			toast.error(err.message || t.loginFailed);
+		}
+		finally
+		{
+			setLoading(false);
+		}
+	};
+	async function loginByGoogle()
+	{
+		setLoading(true);
+		try
+		{
+			const res = await signIn("google", { redirect: false });
+			if (res?.error) 
+			{
+				toast.error(res.error);
+				return ;
+			}
 			toast.success(t.loginSuccess);
 			router.replace("/home");
 		}
@@ -116,6 +160,20 @@ export default function LoginPage()
 						className="w-full bg-[#4F46E5] text-white font-semibold text-sm py-2.5 rounded-xl cursor-pointer hover:bg-[#4338CA] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
 					>
 						{loading ? t.loginLoading : t.loginBtn}
+					</button>
+
+					<div className="flex">
+						<div className="h-px bg-gray-500 flex-1 my-auto"></div>
+						<p className="text-gray-500 mx-1">OR</p>
+						<div className="h-px bg-gray-500 flex-1 my-auto"></div>
+					</div>
+
+					<button
+						onClick={loginByGoogle}
+						disabled={loading}
+						className="w-full bg-white text-black border border-gray-300 font-semibold text-sm py-2.5 rounded-xl cursor-pointer hover:bg-[#e8e8f2] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+					>
+						<FontAwesomeIcon icon={faGoogle}/> Sign in with Google
 					</button>
 
 					{/* Register link */}

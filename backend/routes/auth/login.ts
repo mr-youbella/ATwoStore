@@ -23,14 +23,13 @@ export default async function login(fastify: FastifyInstance)
 		const { identifier, password } = req.body;
 		try
 		{
-			const { rows } = await fastify.pg.query(
-				"SELECT * FROM users WHERE username = $1 OR email = $1",
-				[identifier]
-			);
+			const { rows } = await fastify.pg.query("SELECT * FROM users WHERE username = $1 OR email = $1", [identifier]);
 			if (!rows.length)
 				return (reply.code(401).send({ error: "Invalid identifier or password" }));
 
 			const user  = rows[0];
+			if (user.provider === "google" || !user.password_hash)
+				return (reply.code(401).send({ error: "This account uses Google sign-in" }));
 			const match = await bcrypt.compare(password, user.password_hash);
 
 			if (!match)

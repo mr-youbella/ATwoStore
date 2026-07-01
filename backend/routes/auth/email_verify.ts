@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import { FastifyInstance } from "fastify";
-import { error } from "node:console";
 
 export default async function (fastify: FastifyInstance)
 {

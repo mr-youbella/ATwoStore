@@ -1,8 +1,6 @@
 import { FastifyInstance } from "fastify";
 import bcrypt from "bcrypt";
 
-const SALT_ROUNDS = 10;
-
 export default async function register(fastify: FastifyInstance)
 {
 	fastify.post<{ Body: { username: string; email: string; password: string; digylog_token?: string } }>("/auth/register",
@@ -27,7 +25,7 @@ export default async function register(fastify: FastifyInstance)
 		const { username, email, password, digylog_token } = req.body;
 		try
 		{
-			const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
+			const password_hash = await bcrypt.hash(password, 10);
 			const { rows } = await fastify.pg.query(
 				`INSERT INTO users (username, email, password_hash, digylog_token)
 				 VALUES ($1, $2, $3, $4) RETURNING id, username, email, digylog_token, created_at`,

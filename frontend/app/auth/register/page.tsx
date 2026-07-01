@@ -10,6 +10,8 @@ import { messages } from "@/app/lib/langs/messages";
 import LoadingPage from "@/app/loading";
 import { checkAuth, register } from "@/app/lib/auth/auth";
 import Header from "@/app/header";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage()
 {
@@ -76,6 +78,29 @@ export default function RegisterPage()
 			setLoading(false);
 		}
 	}
+	async function loginByGoogle()
+	{
+		setLoading(true);
+		try
+		{
+			const res = await signIn("google", { redirect: false });
+			if (res?.error) 
+			{
+				toast.error(res.error);
+				return ;
+			}
+			toast.success(t.loginSuccess);
+			router.replace("/home");
+		}
+		catch (err: any)
+		{
+			toast.error(err.message || t.loginFailed);
+		}
+		finally
+		{
+			setLoading(false);
+		}
+	};
 	const invalid = (field: string) => submitted && !form[field as keyof typeof form].trim();
 
 	if(lang_loading || auth_loading)
@@ -164,6 +189,22 @@ export default function RegisterPage()
 						className="w-full bg-[#4F46E5] text-white font-semibold text-sm py-2.5 rounded-xl cursor-pointer hover:bg-[#4338CA] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
 					>
 						{loading ? t.registerLoading : t.registerBtn}
+					</button>
+
+					{/* Register By Google */}
+
+					<div className="flex">
+						<div className="h-px bg-gray-500 flex-1 my-auto"></div>
+						<p className="text-gray-500 mx-1">OR</p>
+						<div className="h-px bg-gray-500 flex-1 my-auto"></div>
+					</div>
+
+					<button
+						onClick={loginByGoogle}
+						disabled={loading}
+						className="w-full bg-white text-black border border-gray-300 font-semibold text-sm py-2.5 rounded-xl cursor-pointer hover:bg-[#e8e8f2] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+					>
+						<FontAwesomeIcon icon={faGoogle}/> Sign in with Google
 					</button>
 
 					{/* Login link */}
