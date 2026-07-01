@@ -177,7 +177,7 @@ export default function AssistantPage()
 							}
 						}}
 						rows={1}
-						className="flex-1 outline-none text-sm text-[#1A1A2E] resize-none bg-transparent placeholder:text-[#B0B8C8] max-h-32"
+						className="flex-1 outline-none text-[16px] text-[#1A1A2E] resize-none bg-transparent placeholder:text-[#B0B8C8] max-h-32"
 						placeholder={t.aiPlaceholder}
 						style={{ minHeight: "24px" }}
 					/>

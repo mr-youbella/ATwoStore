@@ -198,7 +198,7 @@ export default function SettingsPage()
 							<input
 								value={digylog_token}
 								onChange={(e) => { setDigylogToken(e.target.value); setSaved(false); }}
-								className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#4F46E5] transition-colors font-mono pr-10"
+								className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#4F46E5] transition-colors font-mono pr-10"
 								placeholder="f18f2f7d853fe3..."
 							/>
 							{token_error && <p className="text-red-500 text-xs mt-1">{token_error}</p>}
@@ -220,7 +220,7 @@ export default function SettingsPage()
 						<input
 							value={new_username}
 							onChange={(e) => { setNewUsername(e.target.value); setSaved(false); }}
-							className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#4F46E5] transition-colors"
+							className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#4F46E5] transition-colors"
 							placeholder={t.usernamePlaceholder}
 						/>
 						{username_error && <p className="text-red-500 text-xs mt-1">{username_error}</p>}
@@ -239,9 +239,6 @@ export default function SettingsPage()
 				>
 							{ saved ? <><FontAwesomeIcon icon={faCircleCheck} /> {t.settingSaved}</> : loading ? t.saving : t.save }
 				</button>
-
-				{/* Placeholder for future settings */}
-				<p className="text-sm text-[#747f95] text-center py-2">{t.moreSettingsSoon}</p>
 
 			</main>
 		</div>
