@@ -105,7 +105,8 @@ export function useCreateOrder()
 				const digylog_token = await checkDigylogToken();
 				if (!digylog_token)
 					return (setCheckDigylogToken(false), null);
-				const [networksRes, storesRes, citiesRes, fcsRes] = await Promise.all([
+				const [networksRes, storesRes, citiesRes, fcsRes] = await Promise.all
+				([
 					networks.length === 0 ? fetch(`/api/networks`) : null,
 					stores.length === 0 ? fetch(`/api/stores`) : null,
 					cities.length === 0 ? fetch(`/api/cities`) : null,

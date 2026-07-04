@@ -102,9 +102,9 @@ export default function DashboardPage()
 				const date = new Date(order.createdAt);
 				if (newPeriod === "month")
 				{
-					const lastMonth = new Date();
-					lastMonth.setMonth(lastMonth.getMonth() - 1);
-					return (date >= lastMonth && date <= now);
+					const now = new Date();
+					const start_of_this_month = new Date(now.getFullYear(), now.getMonth(), 1);
+					return (date >= start_of_this_month && date <= now);
 				}
 				return (date.getFullYear() === now.getFullYear());
 			})

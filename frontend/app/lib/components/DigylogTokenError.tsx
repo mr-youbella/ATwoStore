@@ -1,9 +1,8 @@
 "use client";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation, faGear, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import { messages } from "../lib/langs/messages";
+import { messages } from "../langs/messages";
 
 interface DigylogTokenErrorProps
 {

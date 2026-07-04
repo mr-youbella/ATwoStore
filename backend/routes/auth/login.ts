@@ -30,8 +30,8 @@ export default async function login(fastify: FastifyInstance)
 			const user  = rows[0];
 			if (user.provider === "google" || !user.password_hash)
 				return (reply.code(401).send({ error: "This account uses Google sign-in" }));
-			const match = await bcrypt.compare(password, user.password_hash);
 
+			const match = await bcrypt.compare(password, user.password_hash);
 			if (!match)
 				return (reply.code(401).send({ error: "Invalid identifier or password" }));
 

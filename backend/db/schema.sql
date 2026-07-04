@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users
 	provider        VARCHAR(20) NOT NULL DEFAULT 'credentials',
 	email_verified  BOOLEAN DEFAULT FALSE,
 	digylog_token   TEXT,
+	webhook_code    VARCHAR(64) UNIQUE NOT NULL,
 	created_at      TIMESTAMP DEFAULT NOW()
 );
  
@@ -59,4 +60,3 @@ CREATE TABLE email_verifications
 	expires_at TIMESTAMP NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW()
 );
-    

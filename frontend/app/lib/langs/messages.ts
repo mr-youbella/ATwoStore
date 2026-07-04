@@ -22,8 +22,13 @@ export const messages =
 			saving: "جاري الحفظ...",
 			moreSettingsSoon: "المزيد من الإعدادات قريباً",
 			tokenInvalid: "الـ token غير صالح",
-			usernameDesc:  "تغيير اسم المستخدم الخاص بك",
+			usernameDesc: "تغيير اسم المستخدم الخاص بك",
 			usernameSaved: "تم تغيير الاسم ✅",
+			webhook: "الـ Webhook",
+			webhookTitle: "رابط الـ Webhook الخاص بك",
+			webhookDesc: "أضف هذا الرابط في إعدادات DigyLog",
+			webhookHint: "يتم تحديث طلباتك تلقائياً عند تغيير حالتها",
+			copied: "تم النسخ ✅",
 
 			// ============= DigyLog Token Error =============
 			digylogTokenNotFound: "لم يتم العثور على DigyLog Token أو أنه غير صالح",
@@ -273,8 +278,13 @@ export const messages =
 			saving: "Saving...",
 			moreSettingsSoon: "More settings coming soon",
 			tokenInvalid: "Invalid token",
-			usernameDesc:  "Change your username",
+			usernameDesc: "Change your username",
 			usernameSaved: "Username updated ✅",
+			webhook: "Webhook",
+			webhookTitle: "Your Webhook URL",
+			webhookDesc: "Add this URL in DigyLog settings",
+			webhookHint: "Your orders update automatically when their status changes",
+			copied: "Copied ✅",
 
 			// ============= DigyLog Token Error =============
 			digylogTokenNotFound: "DigyLog Token not found or invalid",

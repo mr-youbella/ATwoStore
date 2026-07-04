@@ -2,9 +2,16 @@ import { FastifyInstance } from "fastify";
 
 export default async function digylogWebhook(fastify: FastifyInstance)
 {
-	fastify.put("/trackings/webhook", async (req: any, reply) =>
+	fastify.put<{Params: { code: string; } }>("/trackings/webhook/:code", async (req, reply) =>
 	{
-		const body = req.body;		
+		const { code } = req.params;
+
+		const { rows } = await fastify.pg.query(`SELECT id FROM users WHERE webhook_code = $1 LIMIT 1`, [code]);
+		if (rows.length === 0)
+			return (reply.status(404).send({error: "Invalid webhook code"}));
+		const user_id = rows[0].id;
+
+		const body = req.body as any;
 		if (body.type === "subscribe" && body.key)
 		{
 			fastify.log.info(`🔑 Webhook handshake: ${body.key}`);
@@ -17,16 +24,8 @@ export default async function digylogWebhook(fastify: FastifyInstance)
 			return (reply.send({ ok: true }));
 		}
 
-		try
-		{
-			await fastify.pg.query(`INSERT INTO digylog_trackings (user_id, tracking) VALUES (1, $1) ON CONFLICT (user_id, tracking) DO NOTHING`, [traking]);
-			fastify.log.info(`✅ Tracking saved: ${traking}`);
-			return (reply.send({ ok: true }));
-		}
-		catch (err)
-		{
-			fastify.log.error(`❌ Failed to save tracking: ${traking} — ${err}`);
-			return (reply.send({ ok: true }));
-		}
+		await fastify.pg.query(`INSERT INTO digylog_trackings (user_id, tracking) VALUES ($1, $2) ON CONFLICT (user_id, tracking) DO NOTHING`, [user_id, traking]);
+
+		return (reply.send({ ok: true }));
 	});
 }

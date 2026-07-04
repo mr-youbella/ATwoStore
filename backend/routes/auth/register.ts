@@ -1,5 +1,17 @@
 import { FastifyInstance } from "fastify";
 import bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
+
+async function generateWebhookCode(fastify: FastifyInstance): Promise<string>
+{
+	while (true)
+	{
+		const code = randomBytes(15).toString("hex");
+		const { rowCount } = await fastify.pg.query("SELECT 1 FROM users WHERE webhook_code = $1", [code]);
+		if (rowCount === 0)
+			return (code);
+	}
+}
 
 export default async function register(fastify: FastifyInstance)
 {
@@ -26,10 +38,11 @@ export default async function register(fastify: FastifyInstance)
 		try
 		{
 			const password_hash = await bcrypt.hash(password, 10);
+			const webhook_code = await generateWebhookCode(fastify);
 			const { rows } = await fastify.pg.query(
-				`INSERT INTO users (username, email, password_hash, digylog_token)
-				 VALUES ($1, $2, $3, $4) RETURNING id, username, email, digylog_token, created_at`,
-				[username, email, password_hash, digylog_token ?? null]
+				`INSERT INTO users (username, email, password_hash, digylog_token, webhook_code)
+				 VALUES ($1, $2, $3, $4) RETURNING id, username, email, digylog_token, webhook_code, created_at`,
+				[username, email, password_hash, digylog_token ?? null, webhook_code]
 			);
 			const user  = rows[0];
 			const token = fastify.jwt.sign({ id: user.id, username: user.username, email: user.email, token: user.token ?? null });

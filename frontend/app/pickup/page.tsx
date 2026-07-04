@@ -13,7 +13,7 @@ import { getToken } from "../lib/cookies/get_token";
 import Header from "../header";
 import { checkAuth } from "../lib/auth/auth";
 import { checkDigylogToken } from "../lib/data/check_digylog_token";
-import DigylogTokenError from "../createOrder/DigylogTokenError";
+import DigylogTokenError from "../lib/components/DigylogTokenError";
 
 export default function PickupPage()
 {
@@ -344,7 +344,7 @@ export default function PickupPage()
 												<FontAwesomeIcon icon={faTruck} className="text-[#4F46E5] text-[16px]" />
 											</div>
 											<div className={lang === "ar" ? "text-right" : "text-left"}>
-												<p className="text-xs text-[#B0B8C8]">{t.driver} {pickup.picker}</p>
+												<p className="text-xs text-gray-500">{t.driver} {pickup.picker}</p>
 												<p className="text-[#4F46E5] font-bold text-[16px]">{pickup.picker_phone}</p>
 											</div>
 										</div>

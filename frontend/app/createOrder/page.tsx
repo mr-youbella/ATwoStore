@@ -1,10 +1,10 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTrash, faStore, faNetworkWired, faUser, faPhone, faLocationDot, faCity, faDollarSign, faBoxOpen, faFileAlt, faHashtag, faL } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTrash, faStore, faNetworkWired, faUser, faPhone, faLocationDot, faCity, faDollarSign, faBoxOpen, faFileAlt, faHashtag, } from "@fortawesome/free-solid-svg-icons";
 import { useCreateOrder } from "./useCreateOrder";
 import LoadingPage from "../loading";
 import Header from "../header";
-import DigylogTokenError from "./DigylogTokenError";
+import DigylogTokenError from "../lib/components/DigylogTokenError";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { checkAuth } from "../lib/auth/auth";
@@ -271,7 +271,7 @@ export default function CreateOrder()
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 										<div>
 											<p className="text-xs font-semibold text-[#505F76] mb-1">{t.city}</p>
-											<div className="relative items-center gap-2 border border-gray-200 rounded-xl p-3">
+											<div className={`relative items-center gap-2 border ${submitted && !order.city.trim() ? "border-red-400" : "border-gray-200"} rounded-xl p-3`}>
 												<input
 													value={citySearch}
 													onChange={(e) =>

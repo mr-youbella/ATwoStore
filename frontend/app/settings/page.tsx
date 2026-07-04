@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faCircleCheck, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faCircleCheck, faUser, faLink, faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useLang } from "../lib/hooks/useLang";
 import { messages } from "../lib/langs/messages";
 import { checkAuth } from "../lib/auth/auth";
@@ -14,16 +14,17 @@ import { getToken } from "../lib/cookies/get_token";
 
 export default function SettingsPage()
 {
-	const	router	                           = useRouter();
+	const	router							   = useRouter();
 	const	{ lang, toggleLang, lang_loading } = useLang();
-	const	t                                  = messages[lang];
+	const	t								  = messages[lang];
 	const	[digylog_token, setDigylogToken]	 = useState("");
-	const	[loading, setLoading]              = useState(false);
-	const	[saved, setSaved]                  = useState(false);
-	const	[auth_loading, setAuthLoading]     = useState(true);
-	const	[new_username, setNewUsername]     = useState("");
-	const	[token_error, setTokenError]       = useState("");
+	const	[loading, setLoading]			  = useState(false);
+	const	[saved, setSaved]				  = useState(false);
+	const	[auth_loading, setAuthLoading]	 = useState(true);
+	const	[new_username, setNewUsername]	 = useState("");
+	const	[token_error, setTokenError]	   = useState("");
 	const	[username_error, setUsernameError] = useState("");
+	const	[webhook_link, setWebhookLink] = useState("...");
 
 	useEffect(() =>
 	{
@@ -39,10 +40,23 @@ export default function SettingsPage()
 
 	useEffect(() =>
 	{
-	    async function fetchToken()
-	    {
-	        const token = await getToken();
-	    	if (!token) return ;
+		async function check()
+		{
+			const ok = await checkAuth(false, false, router);
+			if (!ok)
+				return ;
+			setAuthLoading(false);
+		}
+		check();
+	}, []);
+
+	useEffect(() =>
+	{
+		async function fetchToken()
+		{
+			const token = await getToken();
+			if (!token)
+				return ;
 			try
 			{
 				const res  = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
@@ -56,6 +70,8 @@ export default function SettingsPage()
 					setDigylogToken(user.digylog_token.slice(0, -10) + "**********");
 				if (user.username)
 					setNewUsername(user.username);
+				if (user.webhook_code)
+					setWebhookLink(`${process.env.NEXT_PUBLIC_BACKEND_URL}/trackings/webhook/${user.webhook_code}`);
 			}
 			catch {}
 		}
@@ -73,7 +89,7 @@ export default function SettingsPage()
 			{
 				method:  "POST",
 				headers: { "Content-Type": "application/json" },
-				body:    JSON.stringify({ digylog_token: digylog_token }),
+				body:	JSON.stringify({ digylog_token: digylog_token }),
 			});
 			const check = await check_res.json();
 			if (!check.valid)
@@ -87,7 +103,7 @@ export default function SettingsPage()
 			{
 				method:  "PUT",
 				headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-				body:    JSON.stringify({ digylog_token: digylog_token }),
+				body:	JSON.stringify({ digylog_token: digylog_token }),
 			});
 			if (!res.ok)
 			{
@@ -176,7 +192,33 @@ export default function SettingsPage()
 				</p>
 
 				<div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-
+						<div className="flex items-center gap-3 p-5 border-b border-gray-100">
+							<div className="w-10 h-10 rounded-xl bg-[#E2DFFF] flex items-center justify-center shrink-0">
+								<FontAwesomeIcon icon={faLink} className="text-[#4F46E5] text-sm" />
+							</div>
+							<div className="flex-1 min-w-0">
+								<p className="text-sm font-bold text-[#1A1A2E]">{t.webhookTitle}</p>
+								<p className="text-xs text-[#505F76] mt-0.5">{t.webhookDesc}</p>
+							</div>
+						</div>
+						<div className="p-5 space-y-3">
+							<div className="flex items-center gap-2 bg-[#F8F9FF] border border-gray-200 rounded-xl px-4 py-2.5">
+								<p className="flex-1 text-xs font-mono text-[#505F76]">
+									{webhook_link}
+								</p>
+								<button
+									onClick={() =>
+									{
+										navigator.clipboard.writeText(webhook_link);
+										toast.success(t.copied);
+									}}
+									className="shrink-0 text-[#4F46E5] hover:text-[#4338CA] cursor-pointer transition-colors"
+								>
+									<FontAwesomeIcon icon={faCopy} className="text-sm" />
+								</button>
+							</div>
+							<p className="text-xs text-[#505F76]">{t.webhookHint}</p>
+					</div>
 					{/* DigyLog Token Card */}
 					<div className="flex items-center gap-3 p-5 border-b border-gray-100">
 						<div className="w-10 h-10 rounded-xl bg-[#E2DFFF] flex items-center justify-center shrink-0">

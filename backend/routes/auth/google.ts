@@ -1,7 +1,19 @@
 import { FastifyInstance } from "fastify";
 import { OAuth2Client } from "google-auth-library";
+import { randomBytes } from "crypto";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+async function generateWebhookCode(fastify: FastifyInstance): Promise<string>
+{
+	while (true)
+	{
+		const code = randomBytes(15).toString("hex");
+		const { rowCount } = await fastify.pg.query("SELECT 1 FROM users WHERE webhook_code = $1", [code]);
+		if (rowCount === 0)
+			return (code);
+	}
+}
 
 async function generateUniqueUsername(fastify: FastifyInstance, baseUsername: string)
 {
@@ -27,16 +39,18 @@ export default async function loginByGoogle(fastify: FastifyInstance)
 		const payload = ticket.getPayload();
   		if (!payload?.email || !payload.email_verified)
     		return reply.code(401).send({ error: "Invalid Google account" });
-  		const email = payload.email;
 
+  		const email = payload.email;
 		const name = email.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
 		const username = await generateUniqueUsername(fastify, name);
+
 
 		const { rows } = await fastify.pg.query("SELECT * FROM users WHERE email = $1", [email]);
 		let user = rows[0];
 		if (!user)
 		{
-			const result = await fastify.pg.query(`INSERT INTO users (username, email, password_hash, provider) VALUES ($1, $2, NULL, 'google') RETURNING *`, [username, email]);
+			const webhook_code = await generateWebhookCode(fastify);
+			const result = await fastify.pg.query(`INSERT INTO users (username, email, password_hash, webhook_code, provider) VALUES ($1, $2, NULL, $3, 'google') RETURNING *`, [username, email, webhook_code]);
 			user = result.rows[0];
 		}
 
