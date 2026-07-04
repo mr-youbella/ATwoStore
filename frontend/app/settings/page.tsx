@@ -203,7 +203,7 @@ export default function SettingsPage()
 						</div>
 						<div className="p-5 space-y-3">
 							<div className="flex items-center gap-2 bg-[#F8F9FF] border border-gray-200 rounded-xl px-4 py-2.5">
-								<p className="flex-1 text-xs font-mono text-[#505F76]">
+								<p className="flex-1 text-xs font-mono text-[#505F76] truncate">
 									{webhook_link}
 								</p>
 								<button
