@@ -131,8 +131,8 @@ export default function DashboardPage()
 			const digylog_token = user_digylog_token.digylog_token || null;
 			let digylog_orders = null;
 			if (digylog_token)
-				digylog_orders = await getOrdersFromTrackings(token);
-			const my_orders = await getMyOrders();
+				digylog_orders = await getOrdersFromTrackings(token, undefined);
+			const my_orders = await getMyOrders(undefined);
 			const all_orders =
 			[
 				...my_orders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),
