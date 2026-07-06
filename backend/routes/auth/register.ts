@@ -45,7 +45,7 @@ export default async function register(fastify: FastifyInstance)
 				[username, email, password_hash, digylog_token ?? null, webhook_code]
 			);
 			const user  = rows[0];
-			const token = fastify.jwt.sign({ id: user.id, username: user.username, email: user.email, token: user.token ?? null });
+			const token = fastify.jwt.sign({ id: user.id, username: user.username, email: user.email, is_admin: user.is_admin });
 			return (reply.code(201).send({ token, user }));
 		}
 		catch (err: any)

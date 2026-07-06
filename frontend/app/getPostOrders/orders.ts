@@ -2,9 +2,11 @@ import { Order } from "../lib/types";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-async function getTrackings(token: string): Promise<string[]>
+async function getTrackings(token: string, user_id: number | undefined): Promise<string[]>
 {
-	const response = await fetch(`${API_URL}/digylog_trackings`,
+	const url = user_id ? `${API_URL}/digylog_trackings/${user_id}` : `${API_URL}/digylog_trackings`;
+
+	const response = await fetch(url,
 	{
 		method: "GET",
 		headers:
@@ -16,16 +18,14 @@ async function getTrackings(token: string): Promise<string[]>
 	});
 
 	if (!response.ok)
-	{
 		throw new Error("Failed to fetch trackings");
-	}
 
-	return response.json();
+	return (response.json());
 }
 
-export async function fetchOrder(tracking: string): Promise<Order | null>
+export async function fetchOrder(tracking: string, user_id: number | undefined): Promise<Order | null>
 {
-	const res = await fetch(`/api/order/${tracking}`);
+	const res = await fetch(`/api/order/${tracking}${user_id === undefined ? "" : `?user_id=${user_id}`}`);
 	if (!res.ok)
 		return (null);
 
@@ -60,17 +60,17 @@ export async function fetchOrder(tracking: string): Promise<Order | null>
 	return (order);
 }
 
-export async function getOrdersFromTrackings(token: string): Promise<Order[] | null>
+export async function getOrdersFromTrackings(token: string, user_id: number | undefined): Promise<Order[] | null>
 {
 	try
 	{
-		const trackings = await getTrackings(token);
-		const orders = await Promise.all(trackings.map((t) => fetchOrder(t)));
+		const trackings = await getTrackings(token, user_id);
+		const orders = await Promise.all(trackings.map((t) => fetchOrder(t, user_id)));
 		return orders.filter((o): o is Order => o !== null);
 	}
 	catch
 	{
-		return null;
+		return (null);
 	}
 }
 

@@ -1,4 +1,5 @@
 import Fastify, { FastifyReply, FastifyRequest } from "fastify";
+import helmet from "@fastify/helmet";
 import postgres from "@fastify/postgres";
 import fastifyJwt from "@fastify/jwt";
 import fastifyCors from "@fastify/cors";
@@ -12,15 +13,17 @@ import digylogWebhook from "./routes/digylog_webhook";
 import digylogPickups from "./routes/digylog_pickups";
 import orders from "./routes/orders";
 import emailVerify from "./routes/auth/email_verify";
-import google from "./routes/auth/google";
+import googleLogin from "./routes/auth/google";
+import admin from "./routes/admin/admin";
 
 dotenv.config({ path: "./.env.local" });
 
 const fastify = Fastify({ logger: true });
 
+fastify.register(helmet, { contentSecurityPolicy: false, });
 fastify.register(fastifyCors, { origin: process.env.CORS_WEBSITE, methods: ["GET", "POST", "PUT", "DELETE"] });
 fastify.register(postgres, { connectionString: process.env.DATABASE_URL });
-fastify.register(fastifyJwt, { secret: process.env.JWT_SECRET! });
+fastify.register(fastifyJwt, { secret: process.env.JWT_SECRET!, sign: { expiresIn: "7d", } });
 fastify.register(register);
 fastify.register(login);
 fastify.register(me);
@@ -30,7 +33,8 @@ fastify.register(digylogWebhook);
 fastify.register(digylogPickups);
 fastify.register(orders);
 fastify.register(emailVerify);
-fastify.register(google);
+fastify.register(googleLogin);
+fastify.register(admin);
 
 declare module "fastify" { interface FastifyInstance { authenticate: (req: FastifyRequest, reply: FastifyReply) => Promise<void> } }
 

@@ -18,7 +18,7 @@ export default function LoginPage()
 	const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
 	const inputs = useRef<(HTMLInputElement | null)[]>([]);
     const [resending, setResending] = useState(false);
-	const [countdown, setCountdown] = useState(0);
+	const [countdown, setCountdown] = useState(60);
     const [warning, setWarning] = useState(false);
 	const [error, setError] = useState("");
 	const [loading, setLoading]   = useState(false);
@@ -46,6 +46,11 @@ export default function LoginPage()
 		return (() => clearInterval(timer));
 	}, [countdown]);
 
+	useEffect(() =>
+	{
+		handleResend(null);
+	}, []);
+
 	function handlePaste(e: React.ClipboardEvent)
 	{
 		e.preventDefault();
@@ -72,9 +77,10 @@ export default function LoginPage()
 			inputs.current[index - 1]?.focus();
 	};
 
-	async function handleResend(e: React.FormEvent)
+	async function handleResend(e: React.FormEvent | null)
 	{
-		e.preventDefault();
+		if (e)
+			e.preventDefault();
 		setResending(true);
 		try
 		{

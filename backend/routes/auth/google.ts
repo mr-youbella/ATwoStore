@@ -40,21 +40,20 @@ export default async function loginByGoogle(fastify: FastifyInstance)
   		if (!payload?.email || !payload.email_verified)
     		return reply.code(401).send({ error: "Invalid Google account" });
 
-  		const email = payload.email;
-		const name = email.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
-		const username = await generateUniqueUsername(fastify, name);
-
-
+		const email = payload.email;
 		const { rows } = await fastify.pg.query("SELECT * FROM users WHERE email = $1", [email]);
 		let user = rows[0];
 		if (!user)
 		{
+			const name = email.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+			const username = await generateUniqueUsername(fastify, name);
 			const webhook_code = await generateWebhookCode(fastify);
+
 			const result = await fastify.pg.query(`INSERT INTO users (username, email, password_hash, webhook_code, provider) VALUES ($1, $2, NULL, $3, 'google') RETURNING *`, [username, email, webhook_code]);
 			user = result.rows[0];
 		}
 
-		const token = fastify.jwt.sign({ id: user.id, email: user.email, username: user.username, });
+		const token = fastify.jwt.sign({ id: user.id, email: user.email, username: user.username, is_admin: user.is_admin });
 		return (reply.send({ token, user }));
 		
 	});

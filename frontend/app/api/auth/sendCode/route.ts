@@ -1,3 +1,4 @@
+import { randomInt } from "crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
@@ -8,7 +9,7 @@ export async function POST(req: Request)
 {
 	const cookieStore = await cookies();
 	const token = cookieStore.get("token")?.value || null;
-	const code = Math.floor(100000 + Math.random() * 900000).toString();
+	const code = String(randomInt(100000, 1000000));
 
 	try
 	{

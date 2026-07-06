@@ -70,7 +70,11 @@ export default function LoginPage()
 		{
 			const data = await login(form.identifier, form.password);
 			toast.success(t.loginSuccess);
-			router.replace("/home");
+			if (data.is_admin)
+				router.replace("/admin");
+			else
+				router.replace("/home");
+			return ;
 		}
 		catch (err: any)
 		{
@@ -93,7 +97,6 @@ export default function LoginPage()
 				return ;
 			}
 			toast.success(t.loginSuccess);
-			router.replace("/home");
 		}
 		catch (err: any)
 		{

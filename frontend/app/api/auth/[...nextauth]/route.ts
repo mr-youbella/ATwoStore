@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -40,7 +41,10 @@ const handler = NextAuth
 					maxAge: 60 * 60 * 24 * 7,
 					path: "/",
 				});
-				return (true);
+				if (data.user.is_admin)
+					return ("/admin");
+				else
+					return ("/home");
 			}
 			catch
 			{

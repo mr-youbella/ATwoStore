@@ -9,7 +9,7 @@ import { getOrdersFromTrackings } from "../getPostOrders/orders";
 import { deleteMyOrder, getMyOrders } from "../lib/orders/myOrders";
 import { checkDigylogToken } from "../lib/data/check_digylog_token";
 
-export function useOrders()
+export function useOrders(user_id: number | undefined)
 {
 	// ============= State =============
 	const [orders, setOrders] = useState<Order[]>([]);
@@ -57,9 +57,11 @@ export function useOrders()
 				return ;
 			try
 			{
-				const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+				const url = user_id === undefined ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me` : `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users/${user_id}`
+				const res = await fetch(url,
 				{
-					headers: { Authorization: `Bearer ${token}` },
+					method: "GET",
+					headers: { Authorization: `Bearer ${token}`, },
 				});
 				if (!res.ok)
 					return ;
@@ -67,8 +69,8 @@ export function useOrders()
 				const user = await res.json();
 				let digylog_orders = null;
 				if (user.digylog_token)
-					digylog_orders = await getOrdersFromTrackings(token);
-				const my_orders = await getMyOrders();
+					digylog_orders = await getOrdersFromTrackings(token, user_id);
+				const my_orders = await getMyOrders(user_id);
 				const all_orders =
 				[
 					...my_orders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),

@@ -2,11 +2,13 @@ import { getToken } from "../cookies/get_token";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export async function getMyOrders()
+export async function getMyOrders(user_id: number | undefined)
 {
 	const jwt = await getToken();
-	const res = await fetch(`${API_URL}/orders`,
+	const URL = user_id === undefined ? `${API_URL}/orders` : `${API_URL}/admin/orders/${user_id}`;
+	const res = await fetch(URL,
 	{
+		method: "GET",
 		headers: { "Authorization": `Bearer ${jwt}` }
 	});
 	if (!res.ok)

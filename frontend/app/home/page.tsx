@@ -7,8 +7,9 @@ import { useLang } from "../lib/hooks/useLang";
 import { messages } from "../lib/langs/messages";
 import LoadingPage from "../loading";
 import { checkAuth } from "../lib/auth/auth";
-import { getUsername } from "../lib/data/get_user_data";
 import Header from "../header";
+import { getToken } from "../lib/cookies/get_token";
+import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 
 export default function HomePage()
 {
@@ -16,6 +17,7 @@ export default function HomePage()
 	const { lang, toggleLang, lang_loading }    = useLang();
 	const t									    = messages[lang];
 	const [username, setUsername]			    = useState<string | null>(null);
+	const [is_admin, setIsAdmin]			    = useState<boolean>(false);
 	const [auth_loading, setAuthLoading]        = useState(true);
 
 	useEffect(() =>
@@ -34,9 +36,29 @@ export default function HomePage()
 	{
 		async function getUser()
 		{
-			const user = await getUsername();
-			if (user)
-				setUsername(user);
+			try
+			{
+				const token = await getToken();
+				if (!token)
+					return (null);
+				const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+				{
+					headers:
+					{
+						"Authorization": `Bearer ${token}`,
+						"Content-Type": "application/json",
+					},
+				});
+				if (!res.ok)
+					return (null);
+				const data = await res.json();
+				setUsername(data.username);
+				setIsAdmin(data.is_admin);
+			}
+			catch (err)
+			{
+				return (null);
+			}
 		}
 		getUser();
 	}, []);
@@ -92,6 +114,24 @@ export default function HomePage()
 								<p className="text-[#505F76] text-xs mt-0.5">{t.dashboardDesc}</p>
 							</div>
 						</button>
+
+						{/* Admin */}
+						{is_admin &&
+							<>
+								<button
+									onClick={() => router.push("/admin")}
+									className="bg-white rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+								>
+									<div className="w-14 h-14 rounded-xl bg-[#E2DFFF] flex items-center justify-center">
+										<FontAwesomeIcon icon={faBlackTie} className="text-[#4F46E5] text-xl" />
+									</div>
+									<div className="text-center">
+										<p className="font-bold text-sm text-[#1A1A2E]">{t.admin}</p>
+										<p className="text-[#505F76] text-xs mt-0.5">{t.adminDesc}</p>
+									</div>
+								</button>
+							</>
+						}
 
 					</div>
 				</div>

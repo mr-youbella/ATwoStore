@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faCircleCheck, faUser, faLink, faCopy } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faCircleCheck, faUser, faLink, faCopy, faTrash, faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useLang } from "../lib/hooks/useLang";
 import { messages } from "../lib/langs/messages";
 import { checkAuth } from "../lib/auth/auth";
@@ -17,14 +17,20 @@ export default function SettingsPage()
 	const	router							   = useRouter();
 	const	{ lang, toggleLang, lang_loading } = useLang();
 	const	t								  = messages[lang];
+	const	[new_digylog_token, setNewDigylogToken]	 = useState("");
 	const	[digylog_token, setDigylogToken]	 = useState("");
 	const	[loading, setLoading]			  = useState(false);
 	const	[saved, setSaved]				  = useState(false);
 	const	[auth_loading, setAuthLoading]	 = useState(true);
 	const	[new_username, setNewUsername]	 = useState("");
+	const	[username, setUsername]	 = useState("");
 	const	[token_error, setTokenError]	   = useState("");
+	const	[showToken, setShowToken] = useState(false);
 	const	[username_error, setUsernameError] = useState("");
 	const	[webhook_link, setWebhookLink] = useState("...");
+	const	[show_delete_confirm, setShowDeleteConfirm] = useState(false);
+	const	[delete_loading, setDeleteLoading]		   = useState(false);
+	const	[delete_input, setDeleteInput]			   = useState("");
 
 	useEffect(() =>
 	{
@@ -67,9 +73,15 @@ export default function SettingsPage()
 					return ;
 				const user = await res.json();
 				if (user.digylog_token)
-					setDigylogToken(user.digylog_token.slice(0, -10) + "**********");
+				{
+					setNewDigylogToken(user.digylog_token);
+					setDigylogToken(user.digylog_token);
+				}
 				if (user.username)
+				{
 					setNewUsername(user.username);
+					setUsername(user.username);
+				}
 				if (user.webhook_code)
 					setWebhookLink(`${process.env.NEXT_PUBLIC_BACKEND_URL}/trackings/webhook/${user.webhook_code}`);
 			}
@@ -80,7 +92,7 @@ export default function SettingsPage()
 
 	async function saveToken()
 	{
-		if (!digylog_token.trim())
+		if (!new_digylog_token.trim() || new_digylog_token.trim() === digylog_token.trim())
 			return ;
 		setLoading(true);
 		try
@@ -89,7 +101,7 @@ export default function SettingsPage()
 			{
 				method:  "POST",
 				headers: { "Content-Type": "application/json" },
-				body:	JSON.stringify({ digylog_token: digylog_token }),
+				body:	JSON.stringify({ digylog_token: new_digylog_token }),
 			});
 			const check = await check_res.json();
 			if (!check.valid)
@@ -103,7 +115,7 @@ export default function SettingsPage()
 			{
 				method:  "PUT",
 				headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-				body:	JSON.stringify({ digylog_token: digylog_token }),
+				body:	JSON.stringify({ digylog_token: new_digylog_token }),
 			});
 			if (!res.ok)
 			{
@@ -112,6 +124,7 @@ export default function SettingsPage()
 			}
 			setSaved(true);
 			toast.success(t.settingSaved);
+			setTokenError("");
 			setSaved(false);
 		}
 		catch
@@ -126,7 +139,7 @@ export default function SettingsPage()
 	}
 	async function saveUsername()
 	{
-		if (!new_username.trim())
+		if (!new_username.trim() || new_username.trim() === username.trim())
 			return ;
 		if (new_username.length < 3)
 		{
@@ -156,6 +169,8 @@ export default function SettingsPage()
 			}
 			setSaved(true);
 			toast.success(t.usernameSaved);
+			setUsernameError("");
+			setUsername(new_username);
 			setTimeout(() => setSaved(false), 3000);
 		}
 		catch
@@ -172,6 +187,35 @@ export default function SettingsPage()
 	{
 		await saveToken();
 		await saveUsername();
+	}
+
+	async function deleteAccount()
+	{
+		setDeleteLoading(true);
+		try
+		{
+			const jwt = await getToken();
+			const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/delete`,
+			{
+				method:  "DELETE",
+				headers: { "Authorization": `Bearer ${jwt}` },
+			});
+			if (!res.ok)
+			{
+				toast.error(t.serverError);
+				return ;
+			}
+			await fetch("/api/auth/removeToken", { method: "POST",});
+			router.replace("/auth/login");
+		}
+		catch
+		{
+			toast.error(t.serverError);
+		}
+		finally
+		{
+			setDeleteLoading(false);
+		}
 	}
 
 	if (lang_loading || auth_loading)
@@ -203,7 +247,7 @@ export default function SettingsPage()
 						</div>
 						<div className="p-5 space-y-3">
 							<div className="flex items-center gap-2 bg-[#F8F9FF] border border-gray-200 rounded-xl px-4 py-2.5">
-								<p className="flex-1 text-xs font-mono text-[#505F76] truncate">
+								<p className="flex-1 text-xs font-mono text-[#505F76] break-all">
 									{webhook_link}
 								</p>
 								<button
@@ -228,7 +272,7 @@ export default function SettingsPage()
 							<p className="text-sm font-bold text-[#1A1A2E]">DigyLog API Token</p>
 							<p className="text-xs text-[#505F76] mt-0.5">{t.tokenDesc}</p>
 						</div>
-						{digylog_token && (
+						{new_digylog_token && (
 							<span className="text-xs bg-[#E1F5EE] text-[#0F6E56] px-2 py-1 rounded-full font-semibold shrink-0">
 								{t.connected}
 							</span>
@@ -237,12 +281,22 @@ export default function SettingsPage()
 
 					<div className="p-5 space-y-3">
 						<div className="relative">
-							<input
-								value={digylog_token}
-								onChange={(e) => { setDigylogToken(e.target.value); setSaved(false); }}
-								className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#4F46E5] transition-colors font-mono pr-10"
-								placeholder="f18f2f7d853fe3..."
-							/>
+							<div className="relative">
+								<input
+									type={showToken ? "text" : "password"}
+									value={new_digylog_token}
+									onChange={(e) => { setNewDigylogToken(e.target.value); setSaved(false); }}
+									className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#4F46E5] transition-colors font-mono pr-10"
+									placeholder="f18f2f7d853fe3..."
+								/>
+								<button
+									type="button"
+									onClick={() => setShowToken(!showToken)}
+									className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+								>
+									<FontAwesomeIcon icon={showToken ? faEyeSlash : faEye} />
+								</button>
+							</div>
 							{token_error && <p className="text-red-500 text-xs mt-1">{token_error}</p>}
 						</div>
 					</div>
@@ -282,6 +336,52 @@ export default function SettingsPage()
 							{ saved ? <><FontAwesomeIcon icon={faCircleCheck} /> {t.settingSaved}</> : loading ? t.saving : t.save }
 				</button>
 
+				{/* Delete Account */}
+			<button
+				onClick={() => setShowDeleteConfirm(true)}
+				className="w-full text-sm font-semibold text-red-500 py-2.5 rounded-xl cursor-pointer hover:bg-red-100 transition-colors border border-red-200"
+			>
+				{t.deleteAccount}
+			</button>
+
+			{/* Confirm Modal */}
+			{show_delete_confirm && (
+				<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+					<div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4" dir={lang === "ar" ? "rtl" : "ltr"}>
+						<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+							<FontAwesomeIcon icon={faTrash} className="text-red-500 text-lg" />
+						</div>
+						<div className="text-center">
+							<h2 className="text-lg font-bold text-[#1A1A2E]">{t.deleteAccountTitle}</h2>
+							<p className="text-xs text-[#505F76] mt-1">{t.deleteAccountDesc}</p>
+						</div>
+						<div>
+							<p className="text-xs text-[#505F76] mb-2">{t.deleteAccountConfirm} <span className="font-bold text-[#1A1A2E]">{new_username}</span></p>
+							<input
+								value={delete_input}
+								onChange={(e) => setDeleteInput(e.target.value)}
+								className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-red-400 transition-colors"
+								placeholder={new_username}
+							/>
+						</div>
+						<div className="flex gap-2">
+							<button
+								onClick={() => { setShowDeleteConfirm(false); setDeleteInput(""); }}
+								className="flex-1 border border-gray-200 rounded-xl py-2.5 text-sm font-semibold text-[#505F76] cursor-pointer hover:bg-gray-50"
+							>
+								{t.cancel}
+							</button>
+							<button
+								onClick={deleteAccount}
+								disabled={delete_input !== new_username || delete_loading}
+								className="flex-1 bg-red-500 text-white rounded-xl py-2.5 text-sm font-semibold cursor-pointer hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
+							>
+								{delete_loading ? t.deleting : t.deleteConfirmBtn}
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 			</main>
 		</div>
 	);

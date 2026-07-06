@@ -29,14 +29,14 @@ export default async function login(fastify: FastifyInstance)
 
 			const user  = rows[0];
 			if (user.provider === "google" || !user.password_hash)
-				return (reply.code(401).send({ error: "This account uses Google sign-in" }));
+				return (reply.code(401).send({ error: "This account used Google sign-in" }));
 
 			const match = await bcrypt.compare(password, user.password_hash);
 			if (!match)
 				return (reply.code(401).send({ error: "Invalid identifier or password" }));
 
 			const token = fastify.jwt.sign({ id: user.id, username: user.username, email: user.email });
-			return (reply.send({ token, user: { id: user.id, username: user.username, email: user.email } }));
+			return (reply.send({ token, user: { id: user.id, username: user.username, email: user.email, is_admin: user.is_admin } }));
 		}
 		catch (err)
 		{

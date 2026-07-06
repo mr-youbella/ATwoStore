@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users
 	password_hash   TEXT,
 	provider        VARCHAR(20) NOT NULL DEFAULT 'credentials',
 	email_verified  BOOLEAN DEFAULT FALSE,
+	is_admin  		BOOLEAN DEFAULT FALSE,
 	digylog_token   TEXT,
 	webhook_code    VARCHAR(64) UNIQUE NOT NULL,
 	created_at      TIMESTAMP DEFAULT NOW()

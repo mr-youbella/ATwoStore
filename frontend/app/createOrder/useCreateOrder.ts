@@ -6,6 +6,7 @@ import { postTracking } from "../getPostOrders/orders";
 import { getToken } from "../lib/cookies/get_token";
 import { checkDigylogToken } from "../lib/data/check_digylog_token";
 import { createMyOrders } from "../lib/orders/myOrders";
+import { randomBytes } from "crypto";
 
 interface Refs
 {
@@ -77,7 +78,7 @@ export function useCreateOrder()
 	const [orders, setOrders] = useState<Order[]>([
 	{
 		id: 1,
-		num: "",
+		num: randomBytes(5).toString("hex"),
 		type: 1,
 		name: "",
 		phone: "",
@@ -86,7 +87,7 @@ export function useCreateOrder()
 		price: "",
 		openproduct: true,
 		port: 1,
-		refs: [{ ref: "", designation: "", quantity: 1 }],
+		refs: [{ ref: randomBytes(5).toString("hex"), designation: "", quantity: 1 }],
 		note: "",
 	}]);
 
@@ -177,7 +178,7 @@ export function useCreateOrder()
 			...prev,
 			{
 				id: Date.now(),
-				num: "",
+				num: randomBytes(5).toString("hex"),
 				type: 1,
 				name: "",
 				phone: "",
@@ -186,7 +187,7 @@ export function useCreateOrder()
 				price: "",
 				openproduct: true,
 				port: 1,
-				refs: [{ ref: "", designation: "", quantity: 1 }],
+				refs: [{ ref: randomBytes(5).toString("hex"), designation: "", quantity: 1 }],
 				note: "",
 			},
 		]);

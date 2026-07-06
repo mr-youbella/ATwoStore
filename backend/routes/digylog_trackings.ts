@@ -11,6 +11,20 @@ export default async function trackingsRoute(fastify: FastifyInstance)
 		return reply.send(rows.map((r: any) => r.tracking));
 	});
 
+	fastify.get("/digylog_trackings/:user_id", { onRequest: [fastify.authenticate] }, async (req: any, reply) =>
+	{
+		if (!req.user.is_admin)
+			return reply.status(403).send({ error: "Forbidden" });
+		const user_id = parseInt(req.params.user_id, 10);
+		if (isNaN(user_id))
+			return reply.status(400).send({ error: "Invalid user ID" });
+		const { rows } = await fastify.pg.query(
+			"SELECT tracking FROM digylog_trackings WHERE user_id = $1 ORDER BY created_at DESC",
+			[user_id]
+		);
+		return reply.send(rows.map((r: any) => r.tracking));
+	});
+
 	fastify.post<{ Body: { tracking: string } }>("/digylog_trackings", { onRequest: [fastify.authenticate] }, async (req: any, reply) =>
 	{
 		const { tracking } = req.body;

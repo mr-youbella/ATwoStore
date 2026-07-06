@@ -11,12 +11,12 @@ import Header from "../header";
 import { ToastContainer } from "react-toastify";
 import AddTrackings from "../lib/components/add_trackings";
 
-export default function OrdersPage()
+export default function OrdersPage({user_id}: {user_id: number | undefined})
 {
 	const router = useRouter();
 	const [auth_loading, setAuthLoading] = useState(true);
 	const { loading_orders, search, filter, page, expanded, filtered, paginated, totalPages, perPage, stats, check_digylog_token, refresh_orders, lang_loading, t, lang, FILTERS, setSearch, setFilter, setPage, setExpanded, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder, setRefreshOrders }
-		= useOrders();
+		= useOrders(user_id);
 	useEffect(() =>
 	{
 		async function check()
