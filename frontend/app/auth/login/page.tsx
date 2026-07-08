@@ -96,7 +96,8 @@ export default function LoginPage()
 				toast.error(res.error);
 				return ;
 			}
-			toast.success(t.loginSuccess);
+			else if (res?.ok)
+				toast.success(t.loginSuccess);
 		}
 		catch (err: any)
 		{

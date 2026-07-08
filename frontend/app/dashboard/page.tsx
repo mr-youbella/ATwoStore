@@ -39,7 +39,7 @@ interface Order
 	refs: Ref[];
 }
 
-export default function DashboardPage()
+export default function DashboardPage({user_id}: {user_id: number | undefined})
 {
 	const router = useRouter();
 	const [orders, setOrders] = useState<Order[] | null>(null);
@@ -117,7 +117,7 @@ export default function DashboardPage()
 			const token = await getToken();
 			if (!token)
 				return (null);
-			const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+			const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users/${user_id}`,
 			{
 				headers:
 				{
@@ -126,19 +126,23 @@ export default function DashboardPage()
 				},
 			});
 			if (!res.ok)
+			{
+				if (res.status === 404)
+					router.replace("/admin");
 				return (null);
+			}
 			const user_digylog_token = await res.json();
 			const digylog_token = user_digylog_token.digylog_token || null;
 			let digylog_orders = null;
 			if (digylog_token)
-				digylog_orders = await getOrdersFromTrackings(token, undefined);
-			const my_orders = await getMyOrders(undefined);
+				digylog_orders = await getOrdersFromTrackings(token, user_id);
+			const my_orders = await getMyOrders(user_id);
 			const all_orders =
 			[
 				...my_orders.map((o: any) => ({ ...o, isMyOrder: true, tracking: String(o.id), createdAt: o.createdat, days_ago: Math.floor((Date.now() - new Date(o.createdat).getTime()) / (1000 * 60 * 60 * 24)) })),
 				...(digylog_orders ?? []).map((o: any) => ({ ...o, isMyOrder: false,})),
 			];
-			const filter_data = all_orders.filter((o) => (o.idStatus === 6 || o.isMyOrder));
+			const filter_data = all_orders.filter((o) => (o.idStatus === 6 || o.idStatus === 45 || o.isMyOrder));
 			setOrders(filter_data);
 			setAllOrders(filter_data);
 		}
@@ -154,13 +158,18 @@ export default function DashboardPage()
 
 			<main className="xl:w-3/4 xl:mx-auto p-5">
 
-				<div className="flex items-center gap-2 mb-6">
+				<div hidden={stats ? false : true} className="flex items-center gap-2 mb-6">
 					{period_options.map((item) =>
 					(
 						<button key={item.key} onClick={() => filterOrders(item.key)} className={`rounded-full px-4 py-2 text-sm font-medium transition ${period === item.key ? "bg-[#4F46E5] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"} cursor-pointer`}>
 							{item.label}
 						</button>
 					))}
+				</div>
+				<div hidden={stats ? true : false} className="w-full">
+					<div className="h-1.5 bg-[#F0F2FF] rounded-full overflow-hidden">
+						<div className="h-full bg-[#4F46E5] rounded-full animate-progress"></div>
+					</div>
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">

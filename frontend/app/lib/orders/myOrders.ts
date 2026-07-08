@@ -33,10 +33,11 @@ export async function createMyOrders(orders:  { name: string; phone: string; add
 	return res.json();
 }
 
-export async function deleteMyOrder(id: number)
+export async function deleteMyOrder(user_id: number | undefined, id: number)
 {
 	const jwt = await getToken();
-	const res = await fetch(`${API_URL}/orders/${id}`,
+	const URL = user_id === undefined ? `${API_URL}/orders/${id}` : `${API_URL}/admin/orders/${user_id}/${id}`;
+	const res = await fetch(URL,
 	{
 		method:  "DELETE",
 		headers: { "Authorization": `Bearer ${jwt}` },

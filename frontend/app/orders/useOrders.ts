@@ -96,7 +96,7 @@ export function useOrders(user_id: number | undefined)
 
 		try
 		{
-			await deleteMyOrder(id);
+			await deleteMyOrder(user_id, id);
 
 			toast.update(toastId,
 			{
@@ -126,7 +126,7 @@ export function useOrders(user_id: number | undefined)
 
 		try
 		{
-			const res_pdf = await fetch(`/api/downloadOrder`,
+			const res_pdf = await fetch(`/api/downloadOrder${user_id === undefined ? "" : `?user_id=${user_id}`}`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -142,7 +142,7 @@ export function useOrders(user_id: number | undefined)
 					isLoading: false,
 					autoClose: 3000,
 				});
-				return;
+				return ;
 			}
 
 			const blob = await res_pdf.blob();
@@ -173,12 +173,12 @@ export function useOrders(user_id: number | undefined)
 	const downloadBl = useCallback(async (bl: number) =>
 	{
 		if (bl === 0)
-			return;
+			return ;
 		const toastId = toast.loading(t.downloading);
 
 		try
 		{
-			const res = await fetch(`/api/order/downloadBl/${bl}`,
+			const res = await fetch(`/api/order/downloadBl/${bl}${user_id === undefined ? "" : `?user_id=${user_id}`}`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -192,7 +192,7 @@ export function useOrders(user_id: number | undefined)
 					isLoading: false,
 					autoClose: 3000,
 				});
-				return;
+				return ;
 			}
 
 			const blob = await res.blob();
@@ -223,12 +223,12 @@ export function useOrders(user_id: number | undefined)
 	const sendOrder = useCallback(async (tracking: string, status_id: number) =>
 	{
 		if (status_id !== 0)
-			return;
+			return ;
 		const toastId = toast.loading(t.sending);
 
 		try
 		{
-			const res = await fetch(`/api/order/send`,
+			const res = await fetch(`/api/order/send${user_id === undefined ? "" : `?user_id=${user_id}`}`,
 			{
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
@@ -246,7 +246,7 @@ export function useOrders(user_id: number | undefined)
 					isLoading: false,
 					autoClose: 3000,
 				});
-				return;
+				return ;
 			}
 
 			setRefreshOrders(!refresh_orders);

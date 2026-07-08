@@ -1,11 +1,23 @@
-import { getDigylogTokenFromUser } from "@/app/lib/data/get_digylog_token";
-import { NextRequest } from "next/server";
+import { getDigylogTokenFromUser, getDigylogTokenFromUserID } from "@/app/lib/data/get_digylog_token";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ bl: string }> })
 {
+	const { searchParams } = new URL(req.url);
 	const { bl } = await params;
 	const bl_number = Number(bl);
-	const token = await getDigylogTokenFromUser();
+	const user_id = searchParams.get("user_id");
+	let token;
+	if (user_id)
+	{
+		const id = Number(user_id);
+
+		if (Number.isNaN(id))
+			return NextResponse.json({ error: "User ID is not a valid number" }, { status: 400 });
+		token = await getDigylogTokenFromUserID(id);
+	}
+	else
+		token = await getDigylogTokenFromUser();
 
 	try
 	{

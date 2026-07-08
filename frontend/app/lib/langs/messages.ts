@@ -227,6 +227,7 @@ export const messages =
 			add: "إضافة",
 			trackingNotFound: "رقم التتبع غير موجود في DigyLog",
 			trackingFailed: "طلبات فشل إضافتها",
+			printLabel: "طباعة الملصق",
 
 			// ============= Pickup =============
 			pickupTitle: "طلباتي الحالية",
@@ -519,6 +520,7 @@ export const messages =
 			add: "Add",
 			trackingNotFound: "Tracking not found in DigyLog",
 			trackingFailed: "trackings failed to add",
+			printLabel: "Print Label",
 
 			// ============= Pickup =============
 			pickupTitle: "My Current Pickups",

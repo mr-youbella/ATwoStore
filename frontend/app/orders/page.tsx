@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQrcode, faPrint, faChevronDown, faChevronUp, faSearch, faChevronLeft, faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faQrcode, faPrint, faChevronDown, faChevronUp, faSearch, faChevronLeft, faChevronRight, faTrash, faIdBadge } from "@fortawesome/free-solid-svg-icons";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "../loading";
@@ -10,31 +10,30 @@ import { useOrders } from "./useOrders";
 import Header from "../header";
 import { ToastContainer } from "react-toastify";
 import AddTrackings from "../lib/components/add_trackings";
+import { Order } from "../lib/types";
 
-export default function OrdersPage({user_id}: {user_id: number | undefined})
-{
+export default function OrdersPage({ user_id }: { user_id: number | undefined }) {
 	const router = useRouter();
 	const [auth_loading, setAuthLoading] = useState(true);
+	const [selected_order, setSelectedOrder] = useState<Order | null>(null);
 	const { loading_orders, search, filter, page, expanded, filtered, paginated, totalPages, perPage, stats, check_digylog_token, refresh_orders, lang_loading, t, lang, FILTERS, setSearch, setFilter, setPage, setExpanded, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder, setRefreshOrders }
 		= useOrders(user_id);
-	useEffect(() =>
-	{
-		async function check()
-		{
+	useEffect(() => {
+		async function check() {
 			const ok = await checkAuth(false, false, router);
 			if (!ok)
-				return ;
+				return;
 			setAuthLoading(false);
 		}
 		check();
 	}, []);
 
-	if(lang_loading || auth_loading)
+	if (lang_loading || auth_loading)
 		return <LoadingPage />;
 	return (
 		<div className="min-h-screen bg-[#F0F2FF]">
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
-			<Header lang={lang} name_page={t.orders} toggleLang={toggleLang}/>
+			<Header lang={lang} name_page={t.orders} toggleLang={toggleLang} />
 
 			<main className="xl:w-3/4 xl:mx-auto p-5 space-y-4">
 
@@ -57,7 +56,7 @@ export default function OrdersPage({user_id}: {user_id: number | undefined})
 						<div className="flex items-center gap-3">
 							<div className="relative flex-1 max-w-xs">
 								<FontAwesomeIcon icon={faSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
-								<input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="w-full border border-gray-200 rounded-xl py-2 pr-9 pl-3 text-sm outline-none focus:border-[#4F46E5]" placeholder={t.searchPlaceholder}/>
+								<input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="w-full border border-gray-200 rounded-xl py-2 pr-9 pl-3 text-sm outline-none focus:border-[#4F46E5]" placeholder={t.searchPlaceholder} />
 							</div>
 						</div>
 
@@ -121,10 +120,10 @@ export default function OrdersPage({user_id}: {user_id: number | undefined})
 										<tr className="hover:bg-[#F8F9FF] transition-colors">
 											<td className="p-3">
 												<button
-													onClick={() => setExpanded(expanded === order.tracking ? null : order.tracking)}
+													onClick={() => setSelectedOrder(order)}
 													className="w-7 h-7 rounded-full bg-[#4F46E5] flex items-center justify-center text-white cursor-pointer hover:bg-[#4338CA] transition-colors"
 												>
-													<FontAwesomeIcon icon={expanded === order.tracking ? faChevronUp : faChevronDown} className="text-xs" />
+													<FontAwesomeIcon icon={faIdBadge} className="text-xs" />
 												</button>
 											</td>
 											<td className="p-3">
@@ -165,54 +164,113 @@ export default function OrdersPage({user_id}: {user_id: number | undefined})
 												</div>
 											</td>
 										</tr>
-										{expanded === order.tracking && (
-											<tr key={`${order.tracking}-expanded`} className="bg-[#F8F9FF]">
-												<td colSpan={11} className="px-6 py-4 border-b border-gray-100">
-													<table className="w-full text-xs mb-3" style={{ tableLayout: "fixed" }}>
-														<thead>
-															<tr className="border-b border-gray-200">
-																{!order.isMyOrder && <th className={`text-[#505F76] font-semibold pb-2 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.thStoreName}</th>}
-																{!order.isMyOrder && <th className={`text-[#505F76] font-semibold pb-2 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.thBl}</th>}
-																{!order.isMyOrder && <th className={`text-[#505F76] font-semibold pb-2 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.thDeliveryCost}</th>}
-																<th className={`text-[#505F76] font-semibold pb-2 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.thAddress}</th>
-															</tr>
-														</thead>
-														<tbody>
-															<tr>
-																{!order.isMyOrder && <td className={`py-2 font-semibold ${lang === "ar" ? "text-right" : "text-left"}`}>{order.store}</td>}
-																{!order.isMyOrder && <td onClick={() => downloadBl(order.bl)} className={`p-2 font-semibold border border-[#4F46E5] rounded-md inline-block w-auto mt-1 text-[#4F46E5] hover:bg-[#4e46e52f] ${lang === "ar" ? "text-right" : "text-left"} ${order.bl !== 0 ? "cursor-pointer" : ""}`}>{order.bl}</td>}
-																{!order.isMyOrder && <td className={`py-2 font-semibold ${lang === "ar" ? "text-right" : "text-left"}`}>{order.deliveryCost}</td>}
-																<td className={`py-2 font-semibold ${lang === "ar" ? "text-right" : "text-left"}`}>{order.address}</td>
-															</tr>
-														</tbody>
-													</table>
-													<table className="w-full text-xs" style={{ tableLayout: "fixed" }}>
-														<thead>
-															<tr className="border-b border-t border-gray-200">
-																<th className={`text-[#505F76] font-semibold py-2 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.thProduct}</th>
-																<th className={`text-[#505F76] font-semibold py-2 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.thQty}</th>
-															</tr>
-														</thead>
-														<tbody>
-															{order.refs.map((r, index) => (
-																<tr key={index}>
-																	<td className={`py-2 font-semibold ${lang === "ar" ? "text-right" : "text-left"}`}>{r.designation}</td>
-																	<td className={`py-2 font-semibold ${lang === "ar" ? "text-right" : "text-left"}`}>{r.quantity}</td>
-																</tr>
-															))}
-														</tbody>
-													</table>
-												</td>
-											</tr>
-										)}
 									</Fragment>
 								))}
 							</tbody>
 						</table>
+						{selected_order && (
+							<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setSelectedOrder(null)}>
+								<div className="bg-white rounded-2xl shadow-xl w-full max-w-lg space-y-4 p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+
+									{/* Header */}
+									<div className="flex justify-between items-center">
+										<button onClick={() => setSelectedOrder(null)} className="text-[#505F76] hover:text-[#1A1A2E] cursor-pointer">✕</button>
+										<div className="flex items-center gap-2 text-[#4F46E5] font-bold text-sm">
+											<FontAwesomeIcon icon={faQrcode} />
+											{selected_order.tracking}
+										</div>
+									</div>
+
+									{/* Status */}
+									<div className="flex justify-center">
+										<span className={`text-xs px-3 py-1.5 rounded-lg font-semibold ${selected_order.idStatus === 6 || selected_order.isMyOrder ? "bg-green-200 text-green-800" : "bg-yellow-200 text-yellow-800"}`}>
+											{!selected_order.isMyOrder ? selected_order.status : "Livrée"}
+										</span>
+									</div>
+
+									{/* Info grid */}
+									<div className="grid grid-cols-2 gap-3">
+										<div className="bg-[#F8F9FF] rounded-xl p-3">
+											<p className="text-xs text-[#505F76] mb-1">{t.thClient}</p>
+											<p className="font-semibold text-sm">{selected_order.name}</p>
+											<p className="text-xs text-[#505F76]">{selected_order.phone}</p>
+										</div>
+										<div className="bg-[#F8F9FF] rounded-xl p-3">
+											<p className="text-xs text-[#505F76] mb-1">{t.thCity}</p>
+											<p className="font-semibold text-sm">{selected_order.city}</p>
+										</div>
+										<div className="bg-[#F8F9FF] rounded-xl p-3">
+											<p className="text-xs text-[#505F76] mb-1">{t.thPrice}</p>
+											<p className="font-semibold text-sm">{Number(selected_order.price).toFixed(2)} DH</p>
+										</div>
+										<div className="bg-[#F8F9FF] rounded-xl p-3">
+											<p className="text-xs text-[#505F76] mb-1">{t.thCreatedAt}</p>
+											<p className="font-semibold text-sm">{new Date(selected_order.createdAt).toLocaleDateString("en-GB")}</p>
+											<p className="text-xs text-[#505F76]">{t.daysAgo(selected_order.days_ago)}</p>
+										</div>
+										{!selected_order.isMyOrder && (
+											<>
+												<div className="bg-[#F8F9FF] rounded-xl p-3">
+													<p className="text-xs text-[#505F76] mb-1">{t.thStoreName}</p>
+													<p className="font-semibold text-sm">{selected_order.store}</p>
+												</div>
+												<div className="bg-[#F8F9FF] rounded-xl p-3">
+													<p className="text-xs text-[#505F76] mb-1">{t.thDeliveryCost}</p>
+													<p className="font-semibold text-sm">{selected_order.deliveryCost} DH</p>
+												</div>
+												<div className="bg-[#F8F9FF] rounded-xl p-3 col-span-2">
+													<p className="text-xs text-[#505F76] mb-1">{t.thBl}</p>
+													<span
+														onClick={() => downloadBl(selected_order.bl)}
+														className={`font-semibold text-sm text-[#4F46E5] border border-[#4F46E5] px-2 py-0.5 rounded-lg inline-block ${selected_order.bl !== 0 ? "cursor-pointer hover:bg-[#4e46e52f]" : ""}`}
+													>
+														{selected_order.bl}
+													</span>
+												</div>
+											</>
+										)}
+										<div className="bg-[#F8F9FF] rounded-xl p-3 col-span-2">
+											<p className="text-xs text-[#505F76] mb-1">{t.thAddress}</p>
+											<p className="font-semibold text-sm">{selected_order.address}</p>
+										</div>
+										{selected_order.cash_status && (
+											<div className="bg-[#F8F9FF] rounded-xl p-3 col-span-2">
+												<p className="text-xs text-[#505F76] mb-1">{t.thCashStatus}</p>
+												<span className="text-xs px-2 py-1 rounded-lg font-semibold bg-[#F1EFE8] text-[#5F5E5A]">{selected_order.cash_status}</span>
+											</div>
+										)}
+									</div>
+
+									{/* Products */}
+									<div>
+										<p className="text-xs font-semibold text-[#505F76] uppercase tracking-widest mb-2">{t.thProduct}</p>
+										<div className="space-y-2">
+											{selected_order.refs.map((r, i) => (
+												<div key={i} className="flex justify-between items-center bg-[#F8F9FF] rounded-xl px-4 py-2.5">
+													<p className="text-sm font-semibold">{r.designation}</p>
+													<span className="text-xs bg-[#E2DFFF] text-[#4F46E5] px-2 py-0.5 rounded-full font-semibold">×{r.quantity}</span>
+												</div>
+											))}
+										</div>
+									</div>
+
+									{/* Actions */}
+									{!selected_order.isMyOrder && (
+										<button
+											onClick={() => { downloadOrder(selected_order.tracking); }}
+											className="w-full flex items-center justify-center gap-2 bg-[#4F46E5] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#4338CA] transition-colors"
+										>
+											<FontAwesomeIcon icon={faPrint} />
+											{t.printLabel}
+										</button>
+									)}
+								</div>
+							</div>
+						)}
 					</div>
 					<div className="flex items-center justify-between p-4 border-t border-gray-100">
 						<p className="text-xs text-[#505F76]">
-							{filtered.length === 0 ? "" : t.showing(Math.min((page - 1) * perPage + 1, filtered.length),Math.min(page * perPage, filtered.length),filtered.length)}
+							{filtered.length === 0 ? "" : t.showing(Math.min((page - 1) * perPage + 1, filtered.length), Math.min(page * perPage, filtered.length), filtered.length)}
 						</p>
 						<div className="flex items-center gap-1">
 							<button

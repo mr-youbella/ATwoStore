@@ -89,8 +89,8 @@ export default function RegisterPage()
 				toast.error(res.error);
 				return ;
 			}
-			toast.success(t.loginSuccess);
-			router.replace("/home");
+			else if (res?.ok)
+				toast.success(t.loginSuccess);
 		}
 		catch (err: any)
 		{
