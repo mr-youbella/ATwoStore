@@ -88,7 +88,7 @@ export default function AssistantPage()
 	if (lang_loading || auth_loading)
 		return (<LoadingPage />);
 	return (
-		<div className="min-h-screen bg-[#F0F2FF] flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
+		<div className="min-h-screen bg-[#0F172A] flex flex-col" dir={lang === "ar" ? "rtl" : "ltr"}>
 
 			<Header lang={lang} name_page={t.aiAssistant} toggleLang={toggleLang} />
 
@@ -101,14 +101,14 @@ export default function AssistantPage()
 					{chat.length === 0 &&
 					(
 						<div className="flex-1 flex flex-col items-center justify-center gap-6 py-10">
-							<div className="w-16 h-16 rounded-2xl bg-[#4F46E5] flex items-center justify-center shadow-lg">
+							<div className="w-16 h-16 rounded-2xl bg-[#10B981] flex items-center justify-center shadow-lg">
 								<FontAwesomeIcon icon={faRobot} className="text-white text-2xl" />
 							</div>
 							<div className="text-center">
-								<h2 className="text-xl font-bold text-[#1A1A2E] mb-1">
+								<h2 className="text-xl font-bold text-[#FFFFFF] mb-1">
 									{t.aiWelcome}
 								</h2>
-								<p className="text-sm text-[#505F76]">
+								<p className="text-sm text-[#94A3B8]">
 									{t.aiWelcomeDesc}
 								</p>
 							</div>
@@ -119,7 +119,7 @@ export default function AssistantPage()
 									<button
 										key={i}
 										onClick={() => sendMessage(q)}
-										className="text-start px-4 py-3 bg-white rounded-xl border border-gray-100 text-sm text-[#505F76] hover:border-[#4F46E5] hover:text-[#4F46E5] transition-colors cursor-pointer shadow-sm"
+										className="text-start px-4 py-3 bg-[#1E293B] rounded-xl border border-[#334155] text-sm text-[#94A3B8] hover:border-[#10B981] hover:text-[#10B981] transition-colors cursor-pointer shadow-sm"
 									>
 										{q}
 									</button>
@@ -133,14 +133,14 @@ export default function AssistantPage()
 						<div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
 
 							{/* Avatar */}
-							<div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-[#4F46E5]" : "bg-white border border-gray-200"}`}>
-								{ msg.role === "user" ? <FontAwesomeIcon icon={faUser} className="text-white text-xs" /> : <FontAwesomeIcon icon={faRobot} className="text-[#4F46E5] text-xs" /> }
+							<div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-[#10B981]" : "bg-[#1E293B] border border-[#334155]"}`}>
+								{ msg.role === "user" ? <FontAwesomeIcon icon={faUser} className="text-white text-xs" /> : <FontAwesomeIcon icon={faRobot} className="text-[#10B981] text-xs" /> }
 							</div>
 
 							{/* Bubble */}
 							<div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user"
-								? "bg-[#4F46E5] text-white rounded-tr-sm"
-								: "bg-white text-[#1A1A2E] shadow-sm border border-gray-100 rounded-tl-sm"
+								? "bg-[#10B981] text-white rounded-tr-sm"
+								: "bg-[#1E293B] text-[#FFFFFF] shadow-sm border border-[#334155] rounded-tl-sm"
 							}`}>
 								<ReactMarkdown>{msg.content}</ReactMarkdown>
 							</div>
@@ -150,11 +150,11 @@ export default function AssistantPage()
 					{/* Loading bubble */}
 					{loading && (
 						<div className="flex gap-3">
-							<div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
-								<FontAwesomeIcon icon={faRobot} className="text-[#4F46E5] text-xs" />
+							<div className="w-8 h-8 rounded-full bg-[#1E293B] border border-[#334155] flex items-center justify-center shrink-0">
+								<FontAwesomeIcon icon={faRobot} className="text-[#10B981] text-xs" />
 							</div>
-							<div className="bg-white border border-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
-								<FontAwesomeIcon icon={faSpinner} className="text-[#4F46E5] text-sm animate-spin" />
+							<div className="bg-[#1E293B] border border-[#334155] rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+								<FontAwesomeIcon icon={faSpinner} className="text-[#10B981] text-sm animate-spin" />
 							</div>
 						</div>
 					)}
@@ -163,7 +163,7 @@ export default function AssistantPage()
 				</div>
 
 				{/* Input area */}
-				<div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 flex items-end gap-3">
+				<div className="bg-[#1E293B] rounded-2xl shadow-sm border border-[#334155] p-3 flex items-end gap-3">
 					<textarea
 						ref={input_ref}
 						value={input}
@@ -177,14 +177,14 @@ export default function AssistantPage()
 							}
 						}}
 						rows={1}
-						className="flex-1 outline-none text-[16px] text-[#1A1A2E] resize-none bg-transparent placeholder:text-[#B0B8C8] max-h-32"
+						className="flex-1 outline-none text-[16px] text-[#FFFFFF] resize-none bg-transparent placeholder:text-[#94A3B8] max-h-32"
 						placeholder={t.aiPlaceholder}
 						style={{ minHeight: "24px" }}
 					/>
 					<button
 						onClick={() => sendMessage()}
 						disabled={!input.trim() || loading}
-						className="w-9 h-9 bg-[#4F46E5] rounded-xl flex items-center justify-center text-white cursor-pointer hover:bg-[#4338CA] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+						className="w-9 h-9 bg-[#10B981] rounded-xl flex items-center justify-center text-white cursor-pointer hover:bg-[#059669] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
 					>
 						<FontAwesomeIcon icon={faPaperPlane} className="text-xs" />
 					</button>

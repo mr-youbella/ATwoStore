@@ -222,7 +222,7 @@ export default function SettingsPage()
 		return <LoadingPage />;
 
 	return (
-		<div className="min-h-screen bg-[#F0F2FF]" dir={lang === "ar" ? "rtl" : "ltr"}>
+		<div className="min-h-screen bg-[#0F172A]" dir={lang === "ar" ? "rtl" : "ltr"}>
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
 
 			{/* Navbar */}
@@ -231,23 +231,23 @@ export default function SettingsPage()
 			<main className="xl:w-1/2 xl:mx-auto p-5 space-y-3">
 
 				{/* Section title */}
-				<p className="text-xs font-bold text-[#505F76] uppercase tracking-widest px-1">
+				<p className="text-xs font-bold text-[#94A3B8] uppercase tracking-widest px-1">
 					{t.integrations}
 				</p>
 
-				<div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-						<div className="flex items-center gap-3 p-5 border-b border-gray-100">
-							<div className="w-10 h-10 rounded-xl bg-[#E2DFFF] flex items-center justify-center shrink-0">
-								<FontAwesomeIcon icon={faLink} className="text-[#4F46E5] text-sm" />
+				<div className="bg-[#1E293B] rounded-2xl shadow-sm overflow-hidden">
+						<div className="flex items-center gap-3 p-5 border-b border-[#334155]">
+							<div className="w-10 h-10 rounded-xl bg-[#0F2E2A] flex items-center justify-center shrink-0">
+								<FontAwesomeIcon icon={faLink} className="text-[#10B981] text-sm" />
 							</div>
 							<div className="flex-1 min-w-0">
-								<p className="text-sm font-bold text-[#1A1A2E]">{t.webhookTitle}</p>
-								<p className="text-xs text-[#505F76] mt-0.5">{t.webhookDesc}</p>
+								<p className="text-sm font-bold text-[#FFFFFF]">{t.webhookTitle}</p>
+								<p className="text-xs text-[#94A3B8] mt-0.5">{t.webhookDesc}</p>
 							</div>
 						</div>
 						<div className="p-5 space-y-3">
-							<div className="flex items-center gap-2 bg-[#F8F9FF] border border-gray-200 rounded-xl px-4 py-2.5">
-								<p className="flex-1 text-xs font-mono text-[#505F76] break-all">
+							<div className="flex items-center gap-2 bg-[#0F172A] border border-[#334155] rounded-xl px-4 py-2.5">
+								<p className="flex-1 text-xs font-mono text-[#94A3B8] break-all">
 									{webhook_link}
 								</p>
 								<button
@@ -256,24 +256,24 @@ export default function SettingsPage()
 										navigator.clipboard.writeText(webhook_link);
 										toast.success(t.copied);
 									}}
-									className="shrink-0 text-[#4F46E5] hover:text-[#4338CA] cursor-pointer transition-colors"
+									className="shrink-0 text-[#10B981] hover:text-[#059669] cursor-pointer transition-colors"
 								>
 									<FontAwesomeIcon icon={faCopy} className="text-sm" />
 								</button>
 							</div>
-							<p className="text-xs text-[#505F76]">{t.webhookHint}</p>
+							<p className="text-xs text-[#94A3B8]">{t.webhookHint}</p>
 					</div>
 					{/* DigyLog Token Card */}
-					<div className="flex items-center gap-3 p-5 border-b border-gray-100">
-						<div className="w-10 h-10 rounded-xl bg-[#E2DFFF] flex items-center justify-center shrink-0">
-							<FontAwesomeIcon icon={faKey} className="text-[#4F46E5] text-sm" />
+					<div className="flex items-center gap-3 p-5 border-b border-[#334155]">
+						<div className="w-10 h-10 rounded-xl bg-[#0F2E2A] flex items-center justify-center shrink-0">
+							<FontAwesomeIcon icon={faKey} className="text-[#10B981] text-sm" />
 						</div>
 						<div className="flex-1 min-w-0">
-							<p className="text-sm font-bold text-[#1A1A2E]">DigyLog API Token</p>
-							<p className="text-xs text-[#505F76] mt-0.5">{t.tokenDesc}</p>
+							<p className="text-sm font-bold text-[#FFFFFF]">DigyLog API Token</p>
+							<p className="text-xs text-[#94A3B8] mt-0.5">{t.tokenDesc}</p>
 						</div>
 						{new_digylog_token && (
-							<span className="text-xs bg-[#E1F5EE] text-[#0F6E56] px-2 py-1 rounded-full font-semibold shrink-0">
+							<span className="text-xs bg-[#0F2E2A] text-[#10B981] px-2 py-1 rounded-full font-semibold shrink-0">
 								{t.connected}
 							</span>
 						)}
@@ -286,13 +286,13 @@ export default function SettingsPage()
 									type={showToken ? "text" : "password"}
 									value={new_digylog_token}
 									onChange={(e) => { setNewDigylogToken(e.target.value); setSaved(false); }}
-									className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#4F46E5] transition-colors font-mono pr-10"
+									className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#10B981] transition-colors font-mono pr-10"
 									placeholder="f18f2f7d853fe3..."
 								/>
 								<button
 									type="button"
 									onClick={() => setShowToken(!showToken)}
-									className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+									className="absolute inset-y-0 right-3 flex items-center text-[#94A3B8] hover:text-[#FFFFFF]"
 								>
 									<FontAwesomeIcon icon={showToken ? faEyeSlash : faEye} />
 								</button>
@@ -302,13 +302,13 @@ export default function SettingsPage()
 					</div>
 
 					{/* Username Card */}
-					<div className="flex items-center gap-3 p-5 border-b border-gray-100">
-						<div className="w-10 h-10 rounded-xl bg-[#E2DFFF] flex items-center justify-center shrink-0">
-							<FontAwesomeIcon icon={faUser} className="text-[#4F46E5] text-sm" />
+					<div className="flex items-center gap-3 p-5 border-b border-[#334155]">
+						<div className="w-10 h-10 rounded-xl bg-[#0F2E2A] flex items-center justify-center shrink-0">
+							<FontAwesomeIcon icon={faUser} className="text-[#10B981] text-sm" />
 						</div>
 						<div className="flex-1 min-w-0">
-							<p className="text-sm font-bold text-[#1A1A2E]">{t.username}</p>
-							<p className="text-xs text-[#505F76] mt-0.5">{t.usernameDesc}</p>
+							<p className="text-sm font-bold text-[#FFFFFF]">{t.username}</p>
+							<p className="text-xs text-[#94A3B8] mt-0.5">{t.usernameDesc}</p>
 						</div>
 					</div>
 										
@@ -316,7 +316,7 @@ export default function SettingsPage()
 						<input
 							value={new_username}
 							onChange={(e) => { setNewUsername(e.target.value); setSaved(false); }}
-							className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#4F46E5] transition-colors"
+							className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#10B981] transition-colors"
 							placeholder={t.usernamePlaceholder}
 						/>
 						{username_error && <p className="text-red-500 text-xs mt-1">{username_error}</p>}
@@ -329,8 +329,8 @@ export default function SettingsPage()
 					disabled={loading || saved}
 					className={`w-full font-semibold text-sm py-2.5 rounded-xl cursor-pointer transition-all duration-300 disabled:cursor-not-allowed flex items-center justify-center gap-2
 						${saved
-							? "bg-[#E1F5EE] text-[#0F6E56]"
-							: "bg-[#4F46E5] text-white hover:bg-[#4338CA] disabled:opacity-60"
+							? "bg-[#0F2E2A] text-[#10B981]"
+							: "bg-[#10B981] text-white hover:bg-[#059669] disabled:opacity-60"
 						}`}
 				>
 							{ saved ? <><FontAwesomeIcon icon={faCircleCheck} /> {t.settingSaved}</> : loading ? t.saving : t.save }
@@ -339,35 +339,35 @@ export default function SettingsPage()
 				{/* Delete Account */}
 			<button
 				onClick={() => setShowDeleteConfirm(true)}
-				className="w-full text-sm font-semibold text-red-500 py-2.5 rounded-xl cursor-pointer hover:bg-red-100 transition-colors border border-red-200"
+				className="w-full text-sm font-semibold text-red-500 py-2.5 rounded-xl cursor-pointer hover:bg-red-500/10 transition-colors border border-red-500/30"
 			>
 				{t.deleteAccount}
 			</button>
 
 			{/* Confirm Modal */}
 			{show_delete_confirm && (
-				<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-					<div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4" dir={lang === "ar" ? "rtl" : "ltr"}>
+				<div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+					<div className="bg-[#1E293B] rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4" dir={lang === "ar" ? "rtl" : "ltr"}>
 						<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto">
 							<FontAwesomeIcon icon={faTrash} className="text-red-500 text-lg" />
 						</div>
 						<div className="text-center">
-							<h2 className="text-lg font-bold text-[#1A1A2E]">{t.deleteAccountTitle}</h2>
-							<p className="text-xs text-[#505F76] mt-1">{t.deleteAccountDesc}</p>
+							<h2 className="text-lg font-bold text-[#FFFFFF]">{t.deleteAccountTitle}</h2>
+							<p className="text-xs text-[#94A3B8] mt-1">{t.deleteAccountDesc}</p>
 						</div>
 						<div>
-							<p className="text-xs text-[#505F76] mb-2">{t.deleteAccountConfirm} <span className="font-bold text-[#1A1A2E]">{new_username}</span></p>
+							<p className="text-xs text-[#94A3B8] mb-2">{t.deleteAccountConfirm} <span className="font-bold text-[#FFFFFF]">{new_username}</span></p>
 							<input
 								value={delete_input}
 								onChange={(e) => setDeleteInput(e.target.value)}
-								className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-red-400 transition-colors"
+								className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-red-400 transition-colors"
 								placeholder={new_username}
 							/>
 						</div>
 						<div className="flex gap-2">
 							<button
 								onClick={() => { setShowDeleteConfirm(false); setDeleteInput(""); }}
-								className="flex-1 border border-gray-200 rounded-xl py-2.5 text-sm font-semibold text-[#505F76] cursor-pointer hover:bg-gray-50"
+								className="flex-1 border border-[#334155] rounded-xl py-2.5 text-sm font-semibold text-[#94A3B8] cursor-pointer hover:bg-[#334155] hover:text-white"
 							>
 								{t.cancel}
 							</button>

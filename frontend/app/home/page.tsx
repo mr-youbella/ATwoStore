@@ -66,7 +66,7 @@ export default function HomePage()
 	if(lang_loading || auth_loading)
 		return <LoadingPage />;
 	return (
-		<div className="min-h-screen bg-[#F0F2FF]" dir={lang === "ar" ? "rtl" : "ltr"}>
+		<div className="min-h-screen bg-[#0F172A]" dir={lang === "ar" ? "rtl" : "ltr"}>
 
 			{/* Navbar */}
 			<Header lang={lang} name_page={t.subtitle} toggleLang={toggleLang}/>
@@ -75,43 +75,43 @@ export default function HomePage()
 
 				{/* Welcome */}
 				<div className={`${lang === "ar" ? "text-right" : "text-left"} pt-2`}>
-					<p className="text-[#505F76] text-sm">{t.welcome}</p>
-					<h2 className="text-3xl font-black text-[#1A1A2E] mt-1">
+					<p className="text-[#94A3B8] text-sm">{t.welcome}</p>
+					<h2 className="text-3xl font-black text-[#FFFFFF] mt-1">
 						{username || '-'} 👋
 					</h2>
-					<div className={`w-10 h-1 bg-[#4F46E5] rounded-full mt-2`} />
+					<div className={`w-10 h-1 bg-[#10B981] rounded-full mt-2`} />
 				</div>
 
 				{/* Quick Access */}
 				<div>
-					<h3 className={`text-lg font-bold text-[#1A1A2E] mb-3 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.quickAccess}</h3>
+					<h3 className={`text-lg font-bold text-[#FFFFFF] mb-3 ${lang === "ar" ? "text-right" : "text-left"}`}>{t.quickAccess}</h3>
 					<div className="grid grid-cols-2 gap-3">
 
 						{/* Orders */}
 						<button
 							onClick={() => router.push("/orders")}
-							className="bg-white rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+							className="bg-[#1E293B] rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
 						>
-							<div className="w-14 h-14 rounded-xl bg-[#E2DFFF] flex items-center justify-center">
-								<FontAwesomeIcon icon={faList} className="text-[#4F46E5] text-xl" />
+							<div className="w-14 h-14 rounded-xl bg-[#0F2E2A] flex items-center justify-center">
+								<FontAwesomeIcon icon={faList} className="text-[#10B981] text-xl" />
 							</div>
 							<div className="text-center">
-								<p className="font-bold text-sm text-[#1A1A2E]">{t.ordersList}</p>
-								<p className="text-[#505F76] text-xs mt-0.5">{t.ordersDesc}</p>
+								<p className="font-bold text-sm text-[#FFFFFF]">{t.ordersList}</p>
+								<p className="text-[#94A3B8] text-xs mt-0.5">{t.ordersDesc}</p>
 							</div>
 						</button>
 
 						{/* Dashboard */}
 						<button
 							onClick={() => router.push("/dashboard")}
-							className="bg-white rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+							className="bg-[#1E293B] rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
 						>
-							<div className="w-14 h-14 rounded-xl bg-[#E2DFFF] flex items-center justify-center">
-								<FontAwesomeIcon icon={faTableCells} className="text-[#4F46E5] text-xl" />
+							<div className="w-14 h-14 rounded-xl bg-[#0F2E2A] flex items-center justify-center">
+								<FontAwesomeIcon icon={faTableCells} className="text-[#10B981] text-xl" />
 							</div>
 							<div className="text-center">
-								<p className="font-bold text-sm text-[#1A1A2E]">{t.dashboard}</p>
-								<p className="text-[#505F76] text-xs mt-0.5">{t.dashboardDesc}</p>
+								<p className="font-bold text-sm text-[#FFFFFF]">{t.dashboard}</p>
+								<p className="text-[#94A3B8] text-xs mt-0.5">{t.dashboardDesc}</p>
 							</div>
 						</button>
 
@@ -120,14 +120,14 @@ export default function HomePage()
 							<>
 								<button
 									onClick={() => router.push("/admin")}
-									className="bg-white rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+									className="bg-[#1E293B] rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
 								>
-									<div className="w-14 h-14 rounded-xl bg-[#E2DFFF] flex items-center justify-center">
-										<FontAwesomeIcon icon={faBlackTie} className="text-[#4F46E5] text-xl" />
+									<div className="w-14 h-14 rounded-xl bg-[#0F2E2A] flex items-center justify-center">
+										<FontAwesomeIcon icon={faBlackTie} className="text-[#10B981] text-xl" />
 									</div>
 									<div className="text-center">
-										<p className="font-bold text-sm text-[#1A1A2E]">{t.admin}</p>
-										<p className="text-[#505F76] text-xs mt-0.5">{t.adminDesc}</p>
+										<p className="font-bold text-sm text-[#FFFFFF]">{t.admin}</p>
+										<p className="text-[#94A3B8] text-xs mt-0.5">{t.adminDesc}</p>
 									</div>
 								</button>
 							</>
@@ -139,7 +139,7 @@ export default function HomePage()
 				{/* Add Order */}
 				<button
 					onClick={() => router.push("/createOrder")}
-					className="w-full bg-linear-to-r from-[#2071b3] via-[#4d388f] to-[#6c2a74] rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:opacity-95 transition-all duration-300">
+					className="w-full bg-linear-to-r from-[#10B981] via-[#10B981] to-[#10B981] rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:opacity-95 transition-all duration-300">
 					<div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
 						<FontAwesomeIcon icon={faChevronLeft} className="text-white text-lg" />
 					</div>
@@ -155,36 +155,35 @@ export default function HomePage()
 				{/* Pickup */}
 				<button
 					onClick={() => router.push("/pickup")}
-					className="w-full bg-white rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+					className="w-full bg-[#1E293B] rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
 				>
-					<div className="w-12 h-12 rounded-xl bg-[#E2DFFF] flex items-center justify-center shrink-0">
-						<FontAwesomeIcon icon={faTruck} className="text-[#4F46E5] text-lg" />
+					<div className="w-12 h-12 rounded-xl bg-[#0F2E2A] flex items-center justify-center shrink-0">
+						<FontAwesomeIcon icon={faTruck} className="text-[#10B981] text-lg" />
 					</div>
 					<div className={lang === "ar" ? "text-right" : "text-left"}>
-						<p className="text-[#1A1A2E] font-black text-base">{t.pickup}</p>
-						<p className="text-[#505F76] text-sm">{t.pickupDesc}</p>
+						<p className="text-[#FFFFFF] font-black text-base">{t.pickup}</p>
+						<p className="text-[#94A3B8] text-sm">{t.pickupDesc}</p>
 					</div>
-					<div className="w-12 h-12 rounded-xl bg-[#F0F2FF] flex items-center justify-center shrink-0">
-						<FontAwesomeIcon icon={faTruck} className="text-[#B0B8C8] text-lg" />
+					<div className="w-12 h-12 rounded-xl bg-[#334155] flex items-center justify-center shrink-0">
+						<FontAwesomeIcon icon={faTruck} className="text-[#94A3B8] text-lg" />
 					</div>
 				</button>
 
 				<button
-    onClick={() => router.push("/assistant")}
-    className="w-full bg-linear-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:opacity-95 transition-all duration-300"
->
-    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-        <span className="text-2xl">🤖</span>
-    </div>
-    <div className={lang === "ar" ? "text-right" : "text-left"}>
-        <p className="text-white font-black text-lg">{t.aiAssistant}</p>
-        <p className="text-white/70 text-sm">{t.aiAssistantDesc}</p>
-    </div>
-    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-        <span className="text-xl">✨</span>
-    </div>
-</button>
-
+				    onClick={() => router.push("/assistant")}
+				    className="w-full bg-linear-to-r from-[#0F172A] via-[#1E293B] to-[#0F172A] border border-gray-50/30 rounded-2xl p-5 flex items-center justify-between shadow-sm cursor-pointer hover:opacity-95 transition-all duration-300"
+				>
+				    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+				        <span className="text-2xl">🤖</span>
+				    </div>
+				    <div className={lang === "ar" ? "text-right" : "text-left"}>
+				        <p className="text-white font-black text-lg">{t.aiAssistant}</p>
+				        <p className="text-white/70 text-sm">{t.aiAssistantDesc}</p>
+				    </div>
+				    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+				        <span className="text-xl">✨</span>
+				    </div>
+				</button>
 			</main>
 		</div>
 	);

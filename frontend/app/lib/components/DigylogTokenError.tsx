@@ -16,7 +16,7 @@ export default function DigylogTokenError( { lang }: DigylogTokenErrorProps)
 
 	return (
 		<div className="flex items-center justify-center min-h-100 p-4">
-			<div className="bg-white rounded-2xl shadow-sm p-8 max-w-md w-full border border-red-100">
+			<div className="bg-[#1E293B] rounded-2xl shadow-sm p-8 max-w-md w-full border border-red-100">
 
 				{/* Icon */}
 				<div className="flex justify-center mb-4">
@@ -29,18 +29,18 @@ export default function DigylogTokenError( { lang }: DigylogTokenErrorProps)
 				</div>
 
 				{/* Title */}
-				<h2 className="text-xl font-bold text-[#1A1A2E] text-center mb-2">
+				<h2 className="text-xl font-bold text-[#FFFFFF] text-center mb-2">
 					{t.digylogTokenRequired}
 				</h2>
 
 				{/* Message */}
-				<p className="text-[#505F76] text-center text-sm leading-relaxed mb-6">
+				<p className="text-[#94A3B8] text-center text-sm leading-relaxed mb-6">
 					{t.digylogTokenNotFound}
 				</p>
 
 				{/* Description */}
-				<div className="bg-[#F8F9FF] rounded-xl p-4 mb-6">
-					<p className="text-xs text-[#505F76] text-center">
+				<div className="bg-[#0F172A] rounded-xl p-4 mb-6">
+					<p className="text-xs text-[#94A3B8] text-center">
 						{t.digylogTokenGoToSettings}
 					</p>
 				</div>
@@ -49,7 +49,7 @@ export default function DigylogTokenError( { lang }: DigylogTokenErrorProps)
 				<button
 					type="button"
 					onClick={() => router.push("/settings")}
-					className="w-full bg-[#4F46E5] text-white font-semibold text-sm py-3 rounded-xl cursor-pointer hover:bg-[#4338CA] transition-all duration-300 flex items-center justify-center gap-2">
+					className="w-full bg-[#10B981] text-white font-semibold text-sm py-3 rounded-xl cursor-pointer hover:bg-[#059669] transition-all duration-300 flex items-center justify-center gap-2">
 					<FontAwesomeIcon icon={faGear} className="text-sm" />
 					{t.digylogTokenGoToSettingsBtn}
 					<FontAwesomeIcon icon={faArrowRight} className="text-sm" />

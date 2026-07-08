@@ -27,36 +27,43 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 		}
 		check();
 	}, []);
+	useEffect(() => {
+		document.body.style.overflow = selected_order ? "hidden" : "auto";
+
+		return () => {
+			document.body.style.overflow = "auto";
+		};
+	}, [selected_order]);
 
 	if (lang_loading || auth_loading)
 		return <LoadingPage />;
 	return (
-		<div className="min-h-screen bg-[#F0F2FF]">
+		<div className="min-h-screen bg-[#0F172A]">
 			<ToastContainer position="top-right" rtl={lang === "ar"} />
 			<Header lang={lang} name_page={t.orders} toggleLang={toggleLang} />
 
 			<main className="xl:w-3/4 xl:mx-auto p-5 space-y-4">
 
 				<div className="grid grid-cols-3 gap-3">
-					<div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-						<p className="text-xs text-[#505F76] font-medium mb-1">{t.totalOrders}</p>
-						<p className="text-2xl font-bold text-[#3323CC]">{stats.total}</p>
+					<div className="bg-[#1E293B] rounded-2xl p-4 shadow-sm text-center">
+						<p className="text-xs text-[#94A3B8] font-medium mb-1">{t.totalOrders}</p>
+						<p className="text-2xl font-bold text-[#10B981]">{stats.total}</p>
 					</div>
-					<div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-						<p className="text-xs text-[#505F76] font-medium mb-1">{t.delivered}</p>
-						<p className="text-2xl font-bold text-[#0F6E56]">{stats.delivered}</p>
+					<div className="bg-[#1E293B] rounded-2xl p-4 shadow-sm text-center">
+						<p className="text-xs text-[#94A3B8] font-medium mb-1">{t.delivered}</p>
+						<p className="text-2xl font-bold text-[#10B981]">{stats.delivered}</p>
 					</div>
-					<div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-						<p className="text-xs text-[#505F76] font-medium mb-1">{t.returned}</p>
+					<div className="bg-[#1E293B] rounded-2xl p-4 shadow-sm text-center">
+						<p className="text-xs text-[#94A3B8] font-medium mb-1">{t.returned}</p>
 						<p className="text-2xl font-bold text-[#854F0B]">{stats.returned}</p>
 					</div>
 				</div>
-				<div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-					<div className="p-4 border-b border-gray-100 space-y-3">
+				<div className="bg-[#1E293B] rounded-2xl shadow-sm overflow-hidden">
+					<div className="p-4 border-b border-[#334155] space-y-3">
 						<div className="flex items-center gap-3">
 							<div className="relative flex-1 max-w-xs">
-								<FontAwesomeIcon icon={faSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
-								<input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="w-full border border-gray-200 rounded-xl py-2 pr-9 pl-3 text-sm outline-none focus:border-[#4F46E5]" placeholder={t.searchPlaceholder} />
+								<FontAwesomeIcon icon={faSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-xs" />
+								<input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl py-2 pr-9 pl-3 text-sm outline-none focus:border-[#10B981]" placeholder={t.searchPlaceholder} />
 							</div>
 						</div>
 
@@ -65,7 +72,7 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 								<button
 									key={f.value}
 									onClick={() => { setFilter(f.value); setPage(1); }}
-									className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${filter === f.value ? "bg-[#4F46E5] text-white" : "bg-[#F0F2FF] text-[#505F76] hover:bg-[#E2DFFF]"}`}>
+									className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${filter === f.value ? "bg-[#10B981] text-white" : "bg-[#0F172A] text-[#94A3B8] hover:bg-[#334155]"}`}>
 									{f.label}
 								</button>
 							))}
@@ -74,8 +81,8 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 					<div className="overflow-x-auto">
 						{loading_orders && (
 							<div className="w-full">
-								<div className="h-1.5 bg-[#F0F2FF] rounded-full overflow-hidden">
-									<div className="h-full bg-[#4F46E5] rounded-full animate-progress"></div>
+								<div className="h-1.5 bg-[#0F172A] rounded-full overflow-hidden">
+									<div className="h-full bg-[#10B981] rounded-full animate-progress"></div>
 								</div>
 							</div>
 						)}
@@ -94,71 +101,71 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 								<col style={{ width: "90px" }} />
 							</colgroup>
 							<thead>
-								<tr className="border-b border-gray-100 bg-[#F8F9FF]">
+								<tr className="border-b border-[#334155] bg-[#0F172A]">
 									<th className="p-3"></th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thTracking}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thPrice}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thClient}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thCity}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thCreatedAt}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thStatus}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thUpdatedAt}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thCashStatus}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thPaidAt}</th>
-									<th className={`text-center text-xs font-semibold text-[#505F76] p-3`}>{t.thActions}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thTracking}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thPrice}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thClient}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thCity}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thCreatedAt}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thStatus}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thUpdatedAt}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thCashStatus}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thPaidAt}</th>
+									<th className={`text-center text-xs font-semibold text-[#94A3B8] p-3`}>{t.thActions}</th>
 								</tr>
 							</thead>
 							<tbody>
 								{paginated.length === 0 && !loading_orders && (
 									<tr>
-										<td colSpan={11} className="text-center py-12 text-[#505F76] text-sm">{t.noResults}</td>
+										<td colSpan={11} className="text-center py-12 text-[#94A3B8] text-sm">{t.noResults}</td>
 									</tr>
 								)}
 								{paginated.map((order, index) =>
 								(
 									<Fragment key={index}>
-										<tr className="hover:bg-[#F8F9FF] transition-colors">
+										<tr className="hover:bg-[#0F172A] transition-colors">
 											<td className="p-3">
 												<button
 													onClick={() => setSelectedOrder(order)}
-													className="w-7 h-7 rounded-full bg-[#4F46E5] flex items-center justify-center text-white cursor-pointer hover:bg-[#4338CA] transition-colors"
+													className="w-7 h-7 rounded-full bg-[#10B981] flex items-center justify-center text-white cursor-pointer hover:bg-[#059669] transition-colors"
 												>
 													<FontAwesomeIcon icon={faIdBadge} className="text-xs" />
 												</button>
 											</td>
 											<td className="p-3">
-												<div className="flex items-center gap-2 text-[#4F46E5] font-semibold text-xs">
+												<div className="flex items-center gap-2 text-[#10B981] font-semibold text-xs">
 													<FontAwesomeIcon icon={faQrcode} className="text-xs" />
 													{order.tracking}
 												</div>
 											</td>
-											<td className="p-3 font-semibold text-xs">{Number(order.price).toFixed(2)}</td>
+											<td className="p-3 font-semibold text-xs text-[#FFFFFF]">{Number(order.price).toFixed(2)}</td>
 											<td className="p-3">
-												<p className="font-semibold text-xs truncate">{order.name}</p>
-												<p className="text-[#505F76] text-xs">{order.phone}</p>
+												<p className="font-semibold text-xs text-[#FFFFFF] truncate">{order.name}</p>
+												<p className="text-[#94A3B8] text-xs">{order.phone}</p>
 											</td>
-											<td className="p-3 text-xs text-[#505F76]">{order.city}</td>
+											<td className="p-3 text-xs text-[#94A3B8]">{order.city}</td>
 											<td className="p-3">
-												<p className="text-xs font-semibold">{new Date(order.createdAt).toLocaleDateString("en-GB")}</p>
-												<p className="text-xs text-[#505F76]">{t.daysAgo(order.days_ago)}</p>
+												<p className="text-xs font-semibold text-[#FFFFFF]">{new Date(order.createdAt).toLocaleDateString("en-GB")}</p>
+												<p className="text-xs text-[#94A3B8]">{t.daysAgo(order.days_ago)}</p>
 											</td>
 											<td onClick={() => (sendOrder(order.tracking, order.idStatus))} className="p-3 text-center">
-												<span className={`text-center text-xs px-2 w-full block rounded-lg font-semibold ${order.idStatus === 0 ? "cursor-pointer bg-gray-200" : order.idStatus === 6 || order.isMyOrder ? "bg-green-200" : "bg-yellow-200"}`}>{!order.isMyOrder ? order.status : "Livrée"}</span>
+												<span className={`text-center text-xs px-2 w-full block rounded-lg font-semibold ${order.idStatus === 0 ? "cursor-pointer bg-[#334155] text-[#94A3B8]" : order.idStatus === 6 || order.isMyOrder ? "bg-[#10B981] text-white" : "bg-[#854F0B] text-white"}`}>{!order.isMyOrder ? order.status : "Livrée"}</span>
 											</td>
-											<td className="p-3 text-xs text-[#505F76]">{!order.isMyOrder ? new Date(order.updatedAt).toLocaleString("en-GB") : "-"}</td>
+											<td className="p-3 text-xs text-[#94A3B8]">{!order.isMyOrder ? new Date(order.updatedAt).toLocaleString("en-GB") : "-"}</td>
 											<td className="p-3">
 												{order.cash_status
-													? <span className={`text-xs px-2 py-1 rounded-lg font-semibold text-center w-full block bg-[#F1EFE8] text-[#5F5E5A]`}>{order.cash_status}</span>
-													: <span className="text-[#505F76]">-</span>
+													? <span className={`text-xs px-2 py-1 rounded-lg font-semibold text-center w-full block bg-[#334155] text-[#94A3B8]`}>{order.cash_status}</span>
+													: <span className="text-[#94A3B8]">-</span>
 												}
 											</td>
-											<td className="p-3 text-xs text-[#505F76]">{order.paidAt ? new Date(order.paidAt).toLocaleString("en-GB") : "-"}</td>
+											<td className="p-3 text-xs text-[#94A3B8]">{order.paidAt ? new Date(order.paidAt).toLocaleString("en-GB") : "-"}</td>
 											<td className="p-3">
 												<div className="flex items-center gap-1">
-													<button hidden={order.isMyOrder} onClick={() => (downloadOrder(order.tracking))} className="w-7 h-7 border border-gray-200 rounded-lg flex items-center justify-center text-[#505F76] hover:text-[#0F6E56] hover:border-[#0F6E56] transition-colors cursor-pointer">
+													<button hidden={order.isMyOrder} onClick={() => (downloadOrder(order.tracking))} className="w-7 h-7 border border-[#334155] rounded-lg flex items-center justify-center text-[#94A3B8] hover:text-[#10B981] hover:border-[#10B981] transition-colors cursor-pointer">
 														<FontAwesomeIcon icon={faPrint} className="text-xs" />
 													</button>
-													<button hidden={!order.isMyOrder} onClick={() => (handleDeleteOrder(Number(order.tracking)))} className={`w-7 h-7 border border-gray-200 rounded-lg flex items-center justify-center text-[#505F76] ${order.isMyOrder ? "hover:text-red-500 hover:border-red-500" : "hover:text-[#4F46E5] hover:border-[#4F46E5]"} transition-colors cursor-pointer`}>
+													<button hidden={!order.isMyOrder} onClick={() => (handleDeleteOrder(Number(order.tracking)))} className={`w-7 h-7 border border-[#334155] rounded-lg flex items-center justify-center text-[#94A3B8] ${order.isMyOrder ? "hover:text-red-500 hover:border-red-500" : "hover:text-[#10B981] hover:border-[#10B981]"} transition-colors cursor-pointer`}>
 														<FontAwesomeIcon icon={faTrash} className="text-xs" />
 													</button>
 												</div>
@@ -169,13 +176,13 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 							</tbody>
 						</table>
 						{selected_order && (
-							<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setSelectedOrder(null)}>
-								<div className="bg-white rounded-2xl shadow-xl w-full max-w-lg space-y-4 p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+							<div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setSelectedOrder(null)}>
+								<div className="bg-[#1E293B] rounded-2xl shadow-xl w-full max-w-lg space-y-4 p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
 
 									{/* Header */}
 									<div className="flex justify-between items-center">
-										<button onClick={() => setSelectedOrder(null)} className="text-[#505F76] hover:text-[#1A1A2E] cursor-pointer">✕</button>
-										<div className="flex items-center gap-2 text-[#4F46E5] font-bold text-sm">
+										<button onClick={() => setSelectedOrder(null)} className="text-[#94A3B8] hover:text-[#FFFFFF] cursor-pointer">✕</button>
+										<div className="flex items-center gap-2 text-[#10B981] font-bold text-sm">
 											<FontAwesomeIcon icon={faQrcode} />
 											{selected_order.tracking}
 										</div>
@@ -183,72 +190,72 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 
 									{/* Status */}
 									<div className="flex justify-center">
-										<span className={`text-xs px-3 py-1.5 rounded-lg font-semibold ${selected_order.idStatus === 6 || selected_order.isMyOrder ? "bg-green-200 text-green-800" : "bg-yellow-200 text-yellow-800"}`}>
+										<span className={`text-xs px-3 py-1.5 rounded-lg font-semibold ${selected_order.idStatus === 6 || selected_order.isMyOrder ? "bg-[#10B981] text-white" : "bg-[#854F0B] text-white"}`}>
 											{!selected_order.isMyOrder ? selected_order.status : "Livrée"}
 										</span>
 									</div>
 
 									{/* Info grid */}
 									<div className="grid grid-cols-2 gap-3">
-										<div className="bg-[#F8F9FF] rounded-xl p-3">
-											<p className="text-xs text-[#505F76] mb-1">{t.thClient}</p>
-											<p className="font-semibold text-sm">{selected_order.name}</p>
-											<p className="text-xs text-[#505F76]">{selected_order.phone}</p>
+										<div className="bg-[#0F172A] rounded-xl p-3">
+											<p className="text-xs text-[#94A3B8] mb-1">{t.thClient}</p>
+											<p className="font-semibold text-sm text-[#FFFFFF]">{selected_order.name}</p>
+											<p className="text-xs text-[#94A3B8]">{selected_order.phone}</p>
 										</div>
-										<div className="bg-[#F8F9FF] rounded-xl p-3">
-											<p className="text-xs text-[#505F76] mb-1">{t.thCity}</p>
-											<p className="font-semibold text-sm">{selected_order.city}</p>
+										<div className="bg-[#0F172A] rounded-xl p-3">
+											<p className="text-xs text-[#94A3B8] mb-1">{t.thCity}</p>
+											<p className="font-semibold text-sm text-[#FFFFFF]">{selected_order.city}</p>
 										</div>
-										<div className="bg-[#F8F9FF] rounded-xl p-3">
-											<p className="text-xs text-[#505F76] mb-1">{t.thPrice}</p>
-											<p className="font-semibold text-sm">{Number(selected_order.price).toFixed(2)} DH</p>
+										<div className="bg-[#0F172A] rounded-xl p-3">
+											<p className="text-xs text-[#94A3B8] mb-1">{t.thPrice}</p>
+											<p className="font-semibold text-sm text-[#FFFFFF]">{Number(selected_order.price).toFixed(2)} DH</p>
 										</div>
-										<div className="bg-[#F8F9FF] rounded-xl p-3">
-											<p className="text-xs text-[#505F76] mb-1">{t.thCreatedAt}</p>
-											<p className="font-semibold text-sm">{new Date(selected_order.createdAt).toLocaleDateString("en-GB")}</p>
-											<p className="text-xs text-[#505F76]">{t.daysAgo(selected_order.days_ago)}</p>
+										<div className="bg-[#0F172A] rounded-xl p-3">
+											<p className="text-xs text-[#94A3B8] mb-1">{t.thCreatedAt}</p>
+											<p className="font-semibold text-sm text-[#FFFFFF]">{new Date(selected_order.createdAt).toLocaleDateString("en-GB")}</p>
+											<p className="text-xs text-[#94A3B8]">{t.daysAgo(selected_order.days_ago)}</p>
 										</div>
 										{!selected_order.isMyOrder && (
 											<>
-												<div className="bg-[#F8F9FF] rounded-xl p-3">
-													<p className="text-xs text-[#505F76] mb-1">{t.thStoreName}</p>
-													<p className="font-semibold text-sm">{selected_order.store}</p>
+												<div className="bg-[#0F172A] rounded-xl p-3">
+													<p className="text-xs text-[#94A3B8] mb-1">{t.thStoreName}</p>
+													<p className="font-semibold text-sm text-[#FFFFFF]">{selected_order.store}</p>
 												</div>
-												<div className="bg-[#F8F9FF] rounded-xl p-3">
-													<p className="text-xs text-[#505F76] mb-1">{t.thDeliveryCost}</p>
-													<p className="font-semibold text-sm">{selected_order.deliveryCost} DH</p>
+												<div className="bg-[#0F172A] rounded-xl p-3">
+													<p className="text-xs text-[#94A3B8] mb-1">{t.thDeliveryCost}</p>
+													<p className="font-semibold text-sm text-[#FFFFFF]">{selected_order.deliveryCost} DH</p>
 												</div>
-												<div className="bg-[#F8F9FF] rounded-xl p-3 col-span-2">
-													<p className="text-xs text-[#505F76] mb-1">{t.thBl}</p>
+												<div className="bg-[#0F172A] rounded-xl p-3 col-span-2">
+													<p className="text-xs text-[#94A3B8] mb-1">{t.thBl}</p>
 													<span
 														onClick={() => downloadBl(selected_order.bl)}
-														className={`font-semibold text-sm text-[#4F46E5] border border-[#4F46E5] px-2 py-0.5 rounded-lg inline-block ${selected_order.bl !== 0 ? "cursor-pointer hover:bg-[#4e46e52f]" : ""}`}
+														className={`font-semibold text-sm text-[#10B981] border border-[#10B981] px-2 py-0.5 rounded-lg inline-block ${selected_order.bl !== 0 ? "cursor-pointer hover:bg-[#10B981] hover:text-white" : ""}`}
 													>
 														{selected_order.bl}
 													</span>
 												</div>
 											</>
 										)}
-										<div className="bg-[#F8F9FF] rounded-xl p-3 col-span-2">
-											<p className="text-xs text-[#505F76] mb-1">{t.thAddress}</p>
-											<p className="font-semibold text-sm">{selected_order.address}</p>
+										<div className="bg-[#0F172A] rounded-xl p-3 col-span-2">
+											<p className="text-xs text-[#94A3B8] mb-1">{t.thAddress}</p>
+											<p className="font-semibold text-sm text-[#FFFFFF]">{selected_order.address}</p>
 										</div>
 										{selected_order.cash_status && (
-											<div className="bg-[#F8F9FF] rounded-xl p-3 col-span-2">
-												<p className="text-xs text-[#505F76] mb-1">{t.thCashStatus}</p>
-												<span className="text-xs px-2 py-1 rounded-lg font-semibold bg-[#F1EFE8] text-[#5F5E5A]">{selected_order.cash_status}</span>
+											<div className="bg-[#0F172A] rounded-xl p-3 col-span-2">
+												<p className="text-xs text-[#94A3B8] mb-1">{t.thCashStatus}</p>
+												<span className="text-xs px-2 py-1 rounded-lg font-semibold bg-[#334155] text-[#94A3B8]">{selected_order.cash_status}</span>
 											</div>
 										)}
 									</div>
 
 									{/* Products */}
 									<div>
-										<p className="text-xs font-semibold text-[#505F76] uppercase tracking-widest mb-2">{t.thProduct}</p>
+										<p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-widest mb-2">{t.thProduct}</p>
 										<div className="space-y-2">
 											{selected_order.refs.map((r, i) => (
-												<div key={i} className="flex justify-between items-center bg-[#F8F9FF] rounded-xl px-4 py-2.5">
-													<p className="text-sm font-semibold">{r.designation}</p>
-													<span className="text-xs bg-[#E2DFFF] text-[#4F46E5] px-2 py-0.5 rounded-full font-semibold">×{r.quantity}</span>
+												<div key={i} className="flex justify-between items-center bg-[#0F172A] rounded-xl px-4 py-2.5">
+													<p className="text-sm font-semibold text-[#FFFFFF]">{r.designation}</p>
+													<span className="text-xs bg-[#10B981] text-white px-2 py-0.5 rounded-full font-semibold">×{r.quantity}</span>
 												</div>
 											))}
 										</div>
@@ -258,7 +265,7 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 									{!selected_order.isMyOrder && (
 										<button
 											onClick={() => { downloadOrder(selected_order.tracking); }}
-											className="w-full flex items-center justify-center gap-2 bg-[#4F46E5] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#4338CA] transition-colors"
+											className="w-full flex items-center justify-center gap-2 bg-[#10B981] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#059669] transition-colors"
 										>
 											<FontAwesomeIcon icon={faPrint} />
 											{t.printLabel}
@@ -268,31 +275,39 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 							</div>
 						)}
 					</div>
-					<div className="flex items-center justify-between p-4 border-t border-gray-100">
-						<p className="text-xs text-[#505F76]">
+					<div className="flex items-center justify-between p-4 border-t border-[#334155]">
+						<p className="text-xs text-[#94A3B8]">
 							{filtered.length === 0 ? "" : t.showing(Math.min((page - 1) * perPage + 1, filtered.length), Math.min(page * perPage, filtered.length), filtered.length)}
 						</p>
 						<div className="flex items-center gap-1">
 							<button
 								onClick={() => setPage((p) => Math.max(1, p - 1))}
 								disabled={page === 1}
-								className="w-8 h-8 border border-gray-200 rounded-lg flex items-center justify-center text-[#505F76] hover:border-[#4F46E5] hover:text-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+								className="w-8 h-8 border border-[#334155] rounded-lg flex items-center justify-center text-[#94A3B8] hover:border-[#10B981] hover:text-[#10B981] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
 							>
 								<FontAwesomeIcon icon={faChevronRight} className="text-xs" />
 							</button>
-							{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-								<button
-									key={p}
-									onClick={() => setPage(p)}
-									className={`w-8 h-8 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${page === p ? "bg-[#4F46E5] text-white" : "border border-gray-200 text-[#505F76] hover:border-[#4F46E5] hover:text-[#4F46E5]"}`}
-								>
-									{p}
-								</button>
-							))}
+							{Array.from({ length: totalPages }, (_, i) => i + 1)
+								.filter((p) => {
+									if (totalPages <= 4) return true;
+									if (page <= 2) return p <= 4;
+									if (page >= totalPages - 1) return p >= totalPages - 3;
+									return (p >= page - 1 && p <= page + 2);
+								})
+								.map((p) => (
+									<button
+										key={p}
+										onClick={() => setPage(p)}
+										className={`w-8 h-8 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${page === p ? "bg-[#10B981] text-white" : "border border-[#334155] text-[#94A3B8] hover:border-[#10B981] hover:text-[#10B981]"}`}
+									>
+										{p}
+									</button>
+								))
+							}
 							<button
 								onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
 								disabled={page === totalPages}
-								className="w-8 h-8 border border-gray-200 rounded-lg flex items-center justify-center text-[#505F76] hover:border-[#4F46E5] hover:text-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+								className="w-8 h-8 border border-[#334155] rounded-lg flex items-center justify-center text-[#94A3B8] hover:border-[#10B981] hover:text-[#10B981] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
 							>
 								<FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
 							</button>
