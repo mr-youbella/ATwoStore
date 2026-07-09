@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQrcode, faPrint, faChevronDown, faChevronUp, faSearch, faChevronLeft, faChevronRight, faTrash, faIdBadge } from "@fortawesome/free-solid-svg-icons";
+import { faQrcode, faPrint, faChevronDown, faChevronUp, faSearch, faChevronLeft, faChevronRight, faTrash, faIdBadge, faArrowRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "../loading";
@@ -16,7 +16,7 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 	const router = useRouter();
 	const [auth_loading, setAuthLoading] = useState(true);
 	const [selected_order, setSelectedOrder] = useState<Order | null>(null);
-	const { loading_orders, search, filter, page, expanded, filtered, paginated, totalPages, perPage, stats, check_digylog_token, refresh_orders, lang_loading, t, lang, FILTERS, setSearch, setFilter, setPage, setExpanded, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder, setRefreshOrders }
+	const { loading_orders, search, filter, page, filtered, paginated, totalPages, perPage, stats, check_digylog_token, refresh_orders, lang_loading, t, lang, FILTERS, setSearch, setFilter, setPage, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder, setRefreshOrders, returnOrder }
 		= useOrders(user_id);
 	useEffect(() => {
 		async function check() {
@@ -263,13 +263,23 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 
 									{/* Actions */}
 									{!selected_order.isMyOrder && (
-										<button
-											onClick={() => { downloadOrder(selected_order.tracking); }}
-											className="w-full flex items-center justify-center gap-2 bg-[#10B981] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#059669] transition-colors"
-										>
-											<FontAwesomeIcon icon={faPrint} />
-											{t.printLabel}
-										</button>
+										<>
+											<p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-widest mb-2">{t.thActions}</p>
+											<button
+												onClick={() => (returnOrder(user_id, selected_order.tracking))}
+												className="w-full flex items-center justify-center gap-2 bg-[#b92c10] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#961605] transition-colors"
+											>
+												<FontAwesomeIcon icon={faArrowRotateLeft} />
+												{t.returnOrder}
+											</button>
+											<button
+												onClick={() => { downloadOrder(selected_order.tracking); }}
+												className="w-full flex items-center justify-center gap-2 bg-[#10B981] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#059669] transition-colors"
+											>
+												<FontAwesomeIcon icon={faPrint} />
+												{t.printLabel}
+											</button>
+										</>
 									)}
 								</div>
 							</div>

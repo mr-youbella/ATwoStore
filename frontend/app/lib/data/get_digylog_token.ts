@@ -1,8 +1,5 @@
 import { cookies } from "next/headers";
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-let cachedDigylogToken: string | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_TTL = 10 * 60 * 1000;
 
 async function getToken()
 {
@@ -12,9 +9,6 @@ async function getToken()
 
 export async function getDigylogTokenFromUser(): Promise<string | null>
 {
-	const now = Date.now();
-	if (cachedDigylogToken && (now - cacheTimestamp) < CACHE_TTL)
-		return (cachedDigylogToken);
 	const token = await getToken();
 	if (!token)
 		return (null);
@@ -31,8 +25,6 @@ export async function getDigylogTokenFromUser(): Promise<string | null>
 		if (!res.ok)
 			return (null);
 		const user = await res.json();
-		cachedDigylogToken = user.digylog_token || null;
-		cacheTimestamp = now;
 		return user.digylog_token || null;
 	}
 	catch

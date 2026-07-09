@@ -87,7 +87,7 @@ export default function AddTrackings({lang, setRefreshOrders, refresh_orders, ch
 						<textarea
 							value={new_tracking}
 							onChange={(e) => setNewTracking(e.target.value)}
-							className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#10B981] font-mono resize-none"
+							className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#10B981] font-mono resize-none"
 							placeholder={"S3C419D5S\nSC083E91T\nS72E9022T"}
 							rows={4}
 						/>

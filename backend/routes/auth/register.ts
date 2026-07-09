@@ -41,7 +41,7 @@ export default async function register(fastify: FastifyInstance)
 			const webhook_code = await generateWebhookCode(fastify);
 			const { rows } = await fastify.pg.query(
 				`INSERT INTO users (username, email, password_hash, digylog_token, webhook_code)
-				 VALUES ($1, $2, $3, $4) RETURNING id, username, email, digylog_token, webhook_code, created_at`,
+				 VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, digylog_token, webhook_code, created_at`,
 				[username, email, password_hash, digylog_token ?? null, webhook_code]
 			);
 			const user  = rows[0];

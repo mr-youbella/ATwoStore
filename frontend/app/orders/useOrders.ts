@@ -20,7 +20,6 @@ export function useOrders(user_id: number | undefined)
 	const { lang, toggleLang, lang_loading } = useLang();
 	const t = messages[lang];
 	const [page, setPage] = useState(1);
-	const [expanded, setExpanded] = useState<string | null>(null);
 	const [check_digylog_token, setCheckDigylogToken] = useState<boolean | null>(null);
 	const perPage = 10;
 
@@ -271,6 +270,28 @@ export function useOrders(user_id: number | undefined)
 		}
 	}, [refresh_orders]);
 
+	// ============= Return Order =============
+	const returnOrder = useCallback(async (user_id: number | undefined, tracking: string) =>
+	{
+		try
+		{
+			const res = await fetch(`/api/returnOrder${user_id !== undefined ? `?user_id=${user_id}` : ""}`,
+			{
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({tracking}),
+			});
+			const data = await res.json();
+			if (!res.ok)
+				return (toast.error(data.error));
+			toast.success(t.returnReq);
+		}
+		catch
+		{
+			toast.error(t.returnReqFailed)
+		}
+	}, []);
+
 	// ============= Refresh =============
 	const refreshOrdersList = useCallback(() =>
 	{
@@ -326,7 +347,6 @@ export function useOrders(user_id: number | undefined)
 		search,
 		filter,
 		page,
-		expanded,
 		filtered,
 		paginated,
 		totalPages,
@@ -342,7 +362,6 @@ export function useOrders(user_id: number | undefined)
 		setSearch,
 		setFilter,
 		setPage,
-		setExpanded,
 		refreshOrdersList,
 		downloadOrder,
 		downloadBl,
@@ -350,5 +369,6 @@ export function useOrders(user_id: number | undefined)
 		toggleLang,
 		handleDeleteOrder,
 		setRefreshOrders,
+		returnOrder,
 	};
 }

@@ -228,6 +228,9 @@ export const messages =
 			trackingNotFound: "رقم التتبع غير موجود في DigyLog",
 			trackingFailed: "طلبات فشل إضافتها",
 			printLabel: "طباعة الملصق",
+			returnOrder: "طلب إرجاع",
+			returnReq: "تم ارسال طلب الارجاع",
+			returnReqFailed: "فشل ارسال طلب الارجاع",
 
 			// ============= Pickup =============
 			pickupTitle: "طلباتي الحالية",
@@ -521,6 +524,9 @@ export const messages =
 			trackingNotFound: "Tracking not found in DigyLog",
 			trackingFailed: "trackings failed to add",
 			printLabel: "Print Label",
+			returnOrder: "Return Request",
+			returnReq: "The return request has been sent",
+			returnReqFailed: "Request to return failed",
 
 			// ============= Pickup =============
 			pickupTitle: "My Current Pickups",
