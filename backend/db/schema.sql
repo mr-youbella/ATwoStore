@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS users
 	is_admin  		BOOLEAN DEFAULT FALSE,
 	digylog_token   TEXT,
 	webhook_code    VARCHAR(64) UNIQUE NOT NULL,
-	created_at      TIMESTAMP DEFAULT NOW()
+	last_seen		TIMESTAMPTZ DEFAULT NOW() NOT NULL;
+	created_at      TIMESTAMPTZ DEFAULT NOW() NOT NULL;
 );
  
 CREATE TABLE IF NOT EXISTS digylog_trackings
@@ -17,7 +18,7 @@ CREATE TABLE IF NOT EXISTS digylog_trackings
 	id         SERIAL PRIMARY KEY,
 	user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 	tracking   VARCHAR(50) NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW(),
+	created_at TIMESTAMPTZ DEFAULT NOW(),
 	UNIQUE (user_id, tracking)
 );
 
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS digylog_pickups
 	seller_phone VARCHAR(20)  NOT NULL,
 	picker       VARCHAR(100) NOT NULL,
 	picker_phone VARCHAR(20) NOT NULL,
-	created_at   TIMESTAMP DEFAULT NOW()
+	created_at   TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS orders
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS orders
 	address    TEXT         NOT NULL,
 	city       VARCHAR(100) NOT NULL,
 	price      DECIMAL(10,2) NOT NULL DEFAULT 0,
-	createdAt TIMESTAMP DEFAULT NOW()
+	createdAt  TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS orders_refs
@@ -58,6 +59,6 @@ CREATE TABLE email_verifications
 	id SERIAL PRIMARY KEY,
 	user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	code_hash TEXT NOT NULL,
-	expires_at TIMESTAMP NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW()
+	expires_at TIMESTAMPTZ NOT NULL,
+	created_at TIMESTAMPTZ DEFAULT NOW()
 );

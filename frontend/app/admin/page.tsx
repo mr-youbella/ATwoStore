@@ -21,6 +21,7 @@ interface User
 	email_verified: boolean;
 	created_at:     string;
 	tracking_count: number;
+	last_seen:		string | null;
 }
 
 export default function AdminPage()
@@ -77,7 +78,7 @@ export default function AdminPage()
 			});
 			if (!res.ok)
 				return ;
-			const data = await res.json();
+			const data: User[] = await res.json();
 			setUsers(data);
 		}
 		catch {}
@@ -183,7 +184,7 @@ export default function AdminPage()
 									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">#</th>
 									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminUsername}</th>
 									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminEmail}</th>
-									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminDigylog}</th>
+									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminLastSeen}</th>
 									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminOrders}</th>
 									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminCreatedAt}</th>
 									<th className="text-center text-xs font-semibold text-[#94A3B8] p-3">{t.adminStatus}</th>
@@ -214,8 +215,8 @@ export default function AdminPage()
 											</td>
 											<td className="p-3 text-center text-xs text-[#94A3B8]">{user.email}</td>
 											<td className="p-3 text-center">
-												{user.digylog_token
-													? <span className="text-xs bg-[#0F2E2A] text-[#10B981] px-2 py-0.5 rounded-full font-semibold">{t.adminConnected}</span>
+												{user.last_seen
+													? <span className="text-xs bg-[#0F2E2A] text-[#10B981] px-2 py-0.5 rounded-full font-semibold">{new Date(user.last_seen).toLocaleString("en-GB", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).replace(",", "")}</span>
 													: <span className="text-xs bg-[#334155] text-[#94A3B8] px-2 py-0.5 rounded-full">—</span>
 												}
 											</td>

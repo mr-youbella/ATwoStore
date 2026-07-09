@@ -295,6 +295,7 @@ export const messages =
 			adminNoToken: "غير متصل",
 			admin: "لوحة الأدمن",
 			adminDesc: "إدارة المستخدمين والطلبات",
+			adminLastSeen: "آخر دخول",
 		},
 		en:
 		{
@@ -591,6 +592,7 @@ export const messages =
 			adminNoToken: "Not connected",
 			admin: "Admin Panel",
 			adminDesc: "Manage users and orders",
+			adminLastSeen: "Last Seen",
 		},
 	} as const;
 
