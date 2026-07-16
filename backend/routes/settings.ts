@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import bcrypt from "bcrypt";
 
 export default async function tokenRoute(fastify: FastifyInstance)
 {
@@ -30,6 +31,47 @@ export default async function tokenRoute(fastify: FastifyInstance)
 			await fastify.pg.query("UPDATE users SET username = $1 WHERE id = $2", [username, req.user.id]);
 			return (reply.send({ ok: true }));
 		}
-		catch (err) { throw err; }
+		catch (err)
+		{
+			throw err;
+		}
+	});
+	fastify.put("/auth/password", { onRequest: [fastify.authenticate],
+		schema:
+		{
+			body:
+			{
+				type: "object",
+				required: ["old_password", "password"],
+				properties: { old_password: { type: ["string", "null"] }, password: { type: "string", minLength: 6 }, },
+			},
+		}, }, async (req: any, reply) =>
+	{
+		const { old_password, password } = req.body as { old_password: string, password: string };
+		if (!password?.trim() || password.length < 6)
+			return (reply.status(400).send({ error: "Password too short" }));
+		try
+		{
+			const { rows } = await fastify.pg.query("SELECT password_hash, provider FROM users WHERE id = $1", [req.user.id]);
+			if (!rows.length)
+				return reply.status(404).send({ error: "User not found" });
+			if (!(rows[0].password_hash === null && old_password === null && rows[0].provider === "google"))
+			{
+				const is_valid = await bcrypt.compare(old_password, rows[0].password_hash);
+				if (!is_valid)
+					return reply.status(400).send({ error: "Current password is incorrect" });
+
+				const same_assword = await bcrypt.compare(password, rows[0].password_hash);
+				if (same_assword)
+					return reply.status(400).send({ error: "New password must be different" });
+			}
+			const password_hash = await bcrypt.hash(password, 10);
+			await fastify.pg.query("UPDATE users SET password_hash = $1 WHERE id = $2", [password_hash, req.user.id]);
+			return (reply.send({ ok: true }));
+		}
+		catch (err)
+		{
+			throw err;
+		}
 	});
 }

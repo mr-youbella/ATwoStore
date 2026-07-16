@@ -35,6 +35,11 @@ export const messages =
 			deleteAccountConfirm: "اكتب اسم المستخدم للتأكيد:",
 			deleteConfirmBtn: "حذف نهائياً",
 			deleted: "تم الحذف بنجاح ✅",
+			changePassword: "تغيير كلمة المرور",
+			changePasswordDesc: "أدخل كلمة مرور جديدة لحسابك",
+			currentPassword: "كلمة المرور الحالية",
+			newPassword: "كلمة المرور الجديدة",
+			passwordChanged: "تم تغيير كلمة المرور ✅",
 
 			// ============= DigyLog Token Error =============
 			digylogTokenNotFound: "لم يتم العثور على DigyLog Token أو أنه غير صالح",
@@ -332,6 +337,13 @@ export const messages =
 			deleteAccountConfirm: "Type your username to confirm:",
 			deleteConfirmBtn: "Delete Permanently",
 			deleted: "Deleted successfully ✅",
+			changePassword: "Change Password",
+			changePasswordDesc: "Enter a new password for your account",
+			currentPassword: "Current Password",
+			newPassword: "New Password",
+			confirmPassword: "Confirm Password",
+			passwordMismatch: "Passwords do not match",
+			passwordChanged: "Password changed ✅",
 
 			// ============= DigyLog Token Error =============
 			digylogTokenNotFound: "DigyLog Token not found or invalid",

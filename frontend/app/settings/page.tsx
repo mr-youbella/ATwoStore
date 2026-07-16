@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faCircleCheck, faUser, faLink, faCopy, faTrash, faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faCircleCheck, faUser, faLink, faCopy, faTrash, faEyeSlash, faEye, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useLang } from "../lib/hooks/useLang";
 import { messages } from "../lib/langs/messages";
 import { checkAuth } from "../lib/auth/auth";
@@ -24,9 +24,15 @@ export default function SettingsPage()
 	const	[auth_loading, setAuthLoading]	 = useState(true);
 	const	[new_username, setNewUsername]	 = useState("");
 	const	[username, setUsername]	 = useState("");
+	const	[old_password, setOldPassword]	 = useState<string | null>(null);
+	const	[show_input_old_password, setShowInputOldPassword]	 = useState<boolean | null>(null);
+	const	[password, setPassword]	 = useState("");
 	const	[token_error, setTokenError]	   = useState("");
-	const	[showToken, setShowToken] = useState(false);
+	const	[show_token, setShowToken] = useState(false);
+	const	[show_old_password, setShowOldPassword] = useState(false);
+	const	[show_password, setShowPassword] = useState(false);
 	const	[username_error, setUsernameError] = useState("");
+	const	[password_error, setPasswordError] = useState("");
 	const	[webhook_link, setWebhookLink] = useState("...");
 	const	[show_delete_confirm, setShowDeleteConfirm] = useState(false);
 	const	[delete_loading, setDeleteLoading]		   = useState(false);
@@ -84,6 +90,10 @@ export default function SettingsPage()
 				}
 				if (user.webhook_code)
 					setWebhookLink(`${process.env.NEXT_PUBLIC_BACKEND_URL}/trackings/webhook/${user.webhook_code}`);
+				if (!user.hash_password)
+					setShowInputOldPassword(false);
+				else
+					setShowInputOldPassword(true);
 			}
 			catch {}
 		}
@@ -182,11 +192,51 @@ export default function SettingsPage()
 			setLoading(false);
 		}
 	}
+	async function newPassword()
+	{
+		if (!password.trim())
+			return ;
+		if (password.length < 6)
+		{
+			setPasswordError(t.passwordTooShort);
+			return ;
+		}
+		setLoading(true);
+		try
+		{
+			const jwt = await getToken();
+			const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/password`,
+			{
+				method:  "PUT",
+				headers: { "Content-Type": "application/json", "Authorization": `Bearer ${jwt}` },
+				body:	JSON.stringify({ old_password: old_password, password: password }),
+			});
+			if (!res.ok)
+			{
+				const data = await res.json();
+				setPasswordError(data.error || t.serverError);
+				return ;
+			}
+			setSaved(true);
+			toast.success(t.passwordChanged);
+			setPasswordError("");
+			setTimeout(() => setSaved(false), 3000);
+		}
+		catch
+		{
+			setPasswordError(t.serverError);
+		}
+		finally
+		{
+			setLoading(false);
+		}
+	}
 
 	async function saveAll()
 	{
 		await saveToken();
 		await saveUsername();
+		await newPassword();
 	}
 
 	async function deleteAccount()
@@ -218,7 +268,7 @@ export default function SettingsPage()
 		}
 	}
 
-	if (lang_loading || auth_loading)
+	if (lang_loading || auth_loading || show_old_password === null)
 		return <LoadingPage />;
 
 	return (
@@ -283,7 +333,7 @@ export default function SettingsPage()
 						<div className="relative">
 							<div className="relative">
 								<input
-									type={showToken ? "text" : "password"}
+									type={show_token ? "text" : "password"}
 									value={new_digylog_token}
 									onChange={(e) => { setNewDigylogToken(e.target.value); setSaved(false); }}
 									className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#10B981] transition-colors font-mono pr-10"
@@ -291,10 +341,10 @@ export default function SettingsPage()
 								/>
 								<button
 									type="button"
-									onClick={() => setShowToken(!showToken)}
+									onClick={() => setShowToken(!show_token)}
 									className="absolute inset-y-0 right-3 flex items-center text-[#94A3B8] hover:text-[#FFFFFF]"
 								>
-									<FontAwesomeIcon icon={showToken ? faEyeSlash : faEye} />
+									<FontAwesomeIcon icon={show_token ? faEyeSlash : faEye} />
 								</button>
 							</div>
 							{token_error && <p className="text-red-500 text-xs mt-1">{token_error}</p>}
@@ -320,6 +370,54 @@ export default function SettingsPage()
 							placeholder={t.usernamePlaceholder}
 						/>
 						{username_error && <p className="text-red-500 text-xs mt-1">{username_error}</p>}
+					</div>
+
+					{/* Password Card */}
+					<div className="flex items-center gap-3 p-5 border-b border-[#334155]">
+						<div className="w-10 h-10 rounded-xl bg-[#0F2E2A] flex items-center justify-center shrink-0">
+							<FontAwesomeIcon icon={faLock} className="text-[#10B981] text-sm" />
+						</div>
+						<div className="flex-1 min-w-0">
+							<p className="text-sm font-bold text-[#FFFFFF]">{t.changePassword}</p>
+							<p className="text-xs text-[#94A3B8] mt-0.5">{t.changePasswordDesc}</p>
+						</div>
+					</div>
+										
+					<div className="p-5 space-y-3">
+						<div className="relative">
+							<input
+								hidden={show_input_old_password ?? false}
+								type={show_old_password ? "text" : "password"}
+								value={old_password ?? ""}
+								onChange={(e) => { setOldPassword(e.target.value); setSaved(false); }}
+								className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#10B981] transition-colors pr-10"
+								placeholder={t.currentPassword}
+							/>
+							<button
+								type="button"
+								onClick={() => setShowOldPassword(!show_old_password)}
+								className="absolute inset-y-0 right-3 flex items-center text-[#94A3B8] hover:text-[#FFFFFF]"
+							>
+								<FontAwesomeIcon icon={show_old_password ? faEyeSlash : faEye} />
+							</button>
+						</div>
+						<div className="relative">
+							<input
+								type={show_password ? "text" : "password"}
+								value={password}
+								onChange={(e) => { setPassword(e.target.value); setSaved(false); }}
+								className="w-full border border-[#334155] bg-[#0F172A] text-[#FFFFFF] rounded-xl px-4 py-2.5 text-[16px] outline-none focus:border-[#10B981] transition-colors pr-10"
+								placeholder={t.newPassword}
+							/>
+							<button
+								type="button"
+								onClick={() => setShowPassword(!show_password)}
+								className="absolute inset-y-0 right-3 flex items-center text-[#94A3B8] hover:text-[#FFFFFF]"
+							>
+								<FontAwesomeIcon icon={show_password ? faEyeSlash : faEye} />
+							</button>
+						</div>
+						{password_error && <p className="text-red-500 text-xs mt-1">{password_error}</p>}
 					</div>
 				</div>
 				
