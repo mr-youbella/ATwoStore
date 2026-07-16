@@ -386,7 +386,7 @@ export default function SettingsPage()
 					<div className="p-5 space-y-3">
 						<div className="relative">
 							<input
-								hidden={show_input_old_password ?? false}
+								hidden={show_input_old_password ? !show_input_old_password : false}
 								type={show_old_password ? "text" : "password"}
 								value={old_password ?? ""}
 								onChange={(e) => { setOldPassword(e.target.value); setSaved(false); }}
