@@ -43,7 +43,7 @@ export default function RootLayout({
 		<html lang="en" className="h-full antialiased">
 			<body>
 				{children}
-				<ToastContainer />
+				<ToastContainer closeOnClick/>
 			</body>
 		</html>
 	);

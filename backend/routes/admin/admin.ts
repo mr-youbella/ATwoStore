@@ -14,7 +14,7 @@ export default async function pickupsRoute(fastify: FastifyInstance)
 				 FROM users u
 				 LEFT JOIN digylog_trackings t ON t.user_id = u.id
 				 GROUP BY u.id
-				 ORDER BY u.created_at DESC`
+				 ORDER BY u.last_seen DESC`
 			);
 		
 			return reply.send(rows);

@@ -46,20 +46,27 @@ export default function AdminPage()
 				router.replace("/auth/login");
 				return ;
 			}
-			const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+			try
 			{
-				headers: { "Authorization": `Bearer ${token}` }
-			});
-			if (!res.ok)
+				const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+				{
+					headers: { "Authorization": `Bearer ${token}` }
+				});
+				if (!res.ok)
+				{
+					router.replace("/auth/login");
+					return ;
+				}
+				const user = await res.json();
+				if (!user.is_admin)
+				{
+					router.replace("/home");
+					return ;
+				}
+			}
+			catch
 			{
 				router.replace("/auth/login");
-				return ;
-			}
-			const user = await res.json();
-			if (!user.is_admin)
-			{
-				router.replace("/home");
-				return ;
 			}
 			setAuthLoading(false);
 			fetchUsers(token);
@@ -125,7 +132,7 @@ export default function AdminPage()
 
 	return (
 		<div className="min-h-screen bg-[#0F172A]" dir={lang === "ar" ? "rtl" : "ltr"}>
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
+			<ToastContainer closeOnClick position="top-right" rtl={lang === "ar"} />
 			<Header lang={lang} name_page={t.adminTitle} toggleLang={toggleLang} />
 
 			<main className="xl:w-3/4 xl:mx-auto p-5 space-y-4">

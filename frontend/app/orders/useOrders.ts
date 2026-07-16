@@ -21,14 +21,13 @@ export function useOrders(user_id: number | undefined)
 	const t = messages[lang];
 	const [page, setPage] = useState(1);
 	const [check_digylog_token, setCheckDigylogToken] = useState<boolean | null>(null);
+	const [return_loading, setReturnLoading] = useState<boolean>(false);
 	const perPage = 10;
 
 	const FILTERS: { label: string; value: string }[] =
 	[
 		{ label: t.filterAll, value: "all" },
 		{ label: t.filterDelivered, value: "delivered" },
-		{ label: t.filterScheduled, value: "scheduled" },
-		{ label: t.filterPickup, value: "pickup" },
 		{ label: t.filterReturned, value: "returned" },
 		{ label: t.myOrder, value: "my_order" },
 	];
@@ -54,6 +53,7 @@ export function useOrders(user_id: number | undefined)
 			const token = await getToken();
 			if (!token)
 				return ;
+			setLoadingOrders(true);
 			try
 			{
 				const url = user_id === undefined ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me` : `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users/${user_id}`
@@ -273,6 +273,7 @@ export function useOrders(user_id: number | undefined)
 	// ============= Return Order =============
 	const returnOrder = useCallback(async (user_id: number | undefined, tracking: string) =>
 	{
+		setReturnLoading(true);
 		try
 		{
 			const res = await fetch(`/api/returnOrder${user_id !== undefined ? `?user_id=${user_id}` : ""}`,
@@ -289,6 +290,10 @@ export function useOrders(user_id: number | undefined)
 		catch
 		{
 			toast.error(t.returnReqFailed)
+		}
+		finally
+		{
+			setReturnLoading(false);
 		}
 	}, []);
 
@@ -310,8 +315,6 @@ export function useOrders(user_id: number | undefined)
 		const matchFilter =
 			filter === "all" ||
 			(o.idStatus === 6 && filter === "delivered") ||
-			(o.idStatus === 18 && filter === "scheduled") ||
-			(o.idStatus === 3 && filter === "pickup") ||
 			((o.idStatus === 8 || o.idStatus === 10 || o.idStatus === 11 || o.idStatus === 30 || o.idStatus === 32 || o.idStatus === 40 || o.idStatus === 41 || o.idStatus === 78 || o.idStatus === 79 || o.idStatus === 81) && filter === "returned") ||
 			(o.isMyOrder && filter === "my_order");
 
@@ -357,6 +360,7 @@ export function useOrders(user_id: number | undefined)
 		lang,
 		FILTERS,
 		check_digylog_token,
+		return_loading,
 
 		// Actions
 		setSearch,

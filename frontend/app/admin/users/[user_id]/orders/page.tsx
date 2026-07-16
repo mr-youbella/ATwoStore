@@ -9,15 +9,22 @@ export default async function OrdersUser({params}: {params: Promise<{user_id: st
 	const token = cookieStore.get("token")?.value;
 	if (!token)
 		redirect("/auth/login");
-	const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+	try
 	{
-		headers: { "Authorization": `Bearer ${token}` }
-	});
-	if (!res.ok)
+		const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+		{
+			headers: { "Authorization": `Bearer ${token}` }
+		});
+		if (!res.ok)
+			redirect("/auth/login");
+		const user = await res.json();
+		if (!user.is_admin)
+			redirect("/home");
+	}
+	catch
+	{
 		redirect("/auth/login");
-	const user = await res.json();
-	if (!user.is_admin)
-		redirect("/home");
+	}
 
 	return (
 		<div>

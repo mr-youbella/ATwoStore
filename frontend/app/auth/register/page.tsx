@@ -217,7 +217,7 @@ export default function RegisterPage()
 
 				</div>
 			</main>
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
+			<ToastContainer closeOnClick position="top-right" rtl={lang === "ar"} />
 		</div>
 	);
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQrcode, faPrint, faChevronDown, faChevronUp, faSearch, faChevronLeft, faChevronRight, faTrash, faIdBadge, faArrowRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import { faQrcode, faPrint, faSearch, faChevronLeft, faChevronRight, faTrash, faIdBadge, faArrowRotateLeft, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "../loading";
@@ -16,7 +16,7 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 	const router = useRouter();
 	const [auth_loading, setAuthLoading] = useState(true);
 	const [selected_order, setSelectedOrder] = useState<Order | null>(null);
-	const { loading_orders, search, filter, page, filtered, paginated, totalPages, perPage, stats, check_digylog_token, refresh_orders, lang_loading, t, lang, FILTERS, setSearch, setFilter, setPage, downloadOrder, downloadBl, sendOrder, toggleLang, handleDeleteOrder, setRefreshOrders, returnOrder }
+	const { loading_orders, search, filter, page, filtered, paginated, totalPages, perPage, stats, check_digylog_token, refresh_orders, lang_loading, t, lang, FILTERS, return_loading, setSearch, setFilter, setPage, downloadOrder, downloadBl, sendOrder, toggleLang, refreshOrdersList, handleDeleteOrder, setRefreshOrders, returnOrder }
 		= useOrders(user_id);
 	useEffect(() => {
 		async function check() {
@@ -30,16 +30,14 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 	useEffect(() => {
 		document.body.style.overflow = selected_order ? "hidden" : "auto";
 
-		return () => {
-			document.body.style.overflow = "auto";
-		};
+		return () => {document.body.style.overflow = "auto";};
 	}, [selected_order]);
 
 	if (lang_loading || auth_loading)
 		return <LoadingPage />;
 	return (
 		<div className="min-h-screen bg-[#0F172A]">
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
+			<ToastContainer closeOnClick position="top-right" rtl={lang === "ar"} />
 			<Header lang={lang} name_page={t.orders} toggleLang={toggleLang} />
 
 			<main className="xl:w-3/4 xl:mx-auto p-5 space-y-4">
@@ -67,15 +65,18 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 							</div>
 						</div>
 
-						<div className="flex gap-2 flex-wrap">
-							{FILTERS.map((f) => (
-								<button
-									key={f.value}
-									onClick={() => { setFilter(f.value); setPage(1); }}
-									className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${filter === f.value ? "bg-[#10B981] text-white" : "bg-[#0F172A] text-[#94A3B8] hover:bg-[#334155]"}`}>
-									{f.label}
-								</button>
-							))}
+						<div className="flex justify-between">
+							<div className="flex gap-2 flex-wrap">
+								{FILTERS.map((f) => (
+									<button
+										key={f.value}
+										onClick={() => { setFilter(f.value); setPage(1); }}
+										className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${filter === f.value ? "bg-[#10B981] text-white" : "bg-[#0F172A] text-[#94A3B8] hover:bg-[#334155]"}`}>
+										{f.label}
+									</button>
+								))}
+							</div>
+							<button disabled={loading_orders} className="text-white cursor-pointer disabled:cursor-not-allowed disabled:animate-spin" onClick={refreshOrdersList}><FontAwesomeIcon icon={faRefresh}/></button>
 						</div>
 					</div>
 					<div className="overflow-x-auto">
@@ -232,6 +233,7 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 														className={`font-semibold text-sm text-[#10B981] border border-[#10B981] px-2 py-0.5 rounded-lg inline-block ${selected_order.bl !== 0 ? "cursor-pointer hover:bg-[#10B981] hover:text-white" : ""}`}
 													>
 														{selected_order.bl}
+														<FontAwesomeIcon className="text-xs ml-1" icon={faPrint}/>
 													</span>
 												</div>
 											</>
@@ -266,11 +268,13 @@ export default function OrdersPage({ user_id }: { user_id: number | undefined })
 										<>
 											<p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-widest mb-2">{t.thActions}</p>
 											<button
+												disabled={return_loading}
 												onClick={() => (returnOrder(user_id, selected_order.tracking))}
-												className="w-full flex items-center justify-center gap-2 bg-[#b92c10] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer hover:bg-[#961605] transition-colors"
+												className="w-full flex items-center justify-center gap-2 bg-[#b92c10] disabled:bg-[#871e09] text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer disabled:cursor-not-allowed hover:bg-[#961605] transition-colors"
 											>
 												<FontAwesomeIcon icon={faArrowRotateLeft} />
 												{t.returnOrder}
+												{return_loading ? " ..." : ""}
 											</button>
 											<button
 												onClick={() => { downloadOrder(selected_order.tracking); }}

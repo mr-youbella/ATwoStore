@@ -115,7 +115,7 @@ export default function LoginPage()
 		return <LoadingPage />;
 	return (
 		<div className="min-h-screen bg-[#0F172A]" dir={lang === "ar" ? "rtl" : "ltr"}>
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
+			<ToastContainer closeOnClick position="top-right" rtl={lang === "ar"} />
 
 			<Header lang={lang} name_page={t.loginSubtitle} toggleLang={toggleLang} />
 			<main className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center p-4">

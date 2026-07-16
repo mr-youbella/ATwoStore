@@ -307,7 +307,7 @@ export default function PickupPage()
 	
 	return (
 		<div className="min-h-screen bg-[#0F172A]" >
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
+			<ToastContainer closeOnClick position="top-right" rtl={lang === "ar"} />
 
 			<Header lang={lang} name_page={t.pickup} toggleLang={toggleLang}/>
 

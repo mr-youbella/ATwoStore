@@ -40,10 +40,35 @@ export default function LoginPage()
 
 	useEffect(() =>
 	{
-		if (countdown === 0)
-			return;
-		const timer = setInterval(() => { setCountdown((prev) => prev - 1); }, 1000);
-		return (() => clearInterval(timer));
+		const handleStorage = (e: StorageEvent) =>
+		{
+			if (e.key === "countdown")
+				localStorage.setItem("countdown", e.oldValue ?? "");
+		};
+		window.addEventListener("storage", handleStorage);
+		return () => {window.removeEventListener("storage", handleStorage);};
+	}, []);
+	useEffect(() =>
+	{
+		const saved = localStorage.getItem("countdown");
+		if (saved !== null)
+		{
+			const value = Number(saved);
+			if (!Number.isNaN(value) && value <= 60)
+				setCountdown(value);
+		}
+	}, []);
+	useEffect(() =>
+	{
+		localStorage.setItem("countdown", countdown.toString());
+	}, [countdown]);
+	useEffect(() =>
+	{
+		if (countdown <= 0)
+			return ;
+
+		const timer = setInterval(() => {setCountdown((prev) => prev - 1);}, 1000);
+		return () => clearInterval(timer);
 	}, [countdown]);
 
 	function handlePaste(e: React.ClipboardEvent)
@@ -162,7 +187,7 @@ export default function LoginPage()
 					<div className="flex justify-center gap-3" onPaste={handlePaste}>
 						{code.map((digit, index) =>
 						(
-							<input key={index} ref={(el) => { inputs.current[index] = el; }} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleChange(index, e.target.value)} onKeyDown={(e) => handleKeyDown(index, e)} className={`w-12 h-14 text-center text-xl font-semibold border bg-[#0F172A] text-[#FFFFFF] ${error ? "border-red-500" : digit ? "border-[#10B981]" : "border-[#334155]"} rounded-xl focus:outline-none focus:border-[#10B981] transition-all`}/>
+							<input key={index} ref={(el) => { inputs.current[index] = el; }} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleChange(index, e.target.value)} onKeyDown={(e) => handleKeyDown(index, e)} className={`w-10 h-12 sm:w-12 sm:h-14 text-center text-xl font-semibold border bg-[#0F172A] text-[#FFFFFF] ${error ? "border-red-500" : digit ? "border-[#10B981]" : "border-[#334155]"} rounded-xl focus:outline-none focus:border-[#10B981] transition-all`}/>
 						))}
 					</div>
 					<button type="submit" disabled={loading} className="w-full bg-[#10B981] hover:bg-[#059669] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold text-sm tracking-widest uppercase rounded-xl py-3.5 transition-colors flex items-center justify-center gap-2 mt-1 cursor-pointer">{loading ? t.verfySendCodeLoading : t.verfySendCode }</button>
@@ -174,7 +199,7 @@ export default function LoginPage()
 					</div>
 				</form>
 			</main>
-			<ToastContainer position="top-right" rtl={lang === "ar"} />
+			<ToastContainer closeOnClick position="top-right" rtl={lang === "ar"} />
 		</div>
 	);
 }
